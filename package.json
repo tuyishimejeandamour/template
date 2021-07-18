@@ -19,7 +19,7 @@
     "com",
     "generator",
     "template",
-    "markdown"
+    "framework"
   ],
   "scripts": {
     "start": "npm run build && npm run global",
