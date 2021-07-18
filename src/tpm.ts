@@ -3,9 +3,8 @@ import { githubActions, gitlabActions, bitbucketActions, codecommitActions } fro
 import { providerQuestion } from './questions';
 import { showTitleAndBanner } from './utils/logger.util';
 
-export async function CGX(): Promise<any> {
+export async function TPM(): Promise<any> {
     showTitleAndBanner();
-
     const providerAnswer: Answer = await providerQuestion();
 
     if (providerAnswer.provider === ProviderValue.GITHUB) {

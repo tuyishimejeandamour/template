@@ -1,7 +1,7 @@
-import { CGX } from './cgx';
+import { TPM } from './tpm';
 
 export function index(): Promise<any> {
-  return CGX();
+  return TPM();
 };
 
 index();

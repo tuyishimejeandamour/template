@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { CGX } from './cgx';
+import { TPM } from './tpm';
 import * as logger from './utils/logger.util';
 import * as questions from './questions/provider.question';
 import { ProviderValue, Answer, LicenseValue } from './models/choice';
@@ -9,7 +9,7 @@ import * as gitlab from './actions/gitlab.actions';
 import * as codecommit from './actions/codecommit.actions';
 import * as bitbucket from './actions/bitbucket.actions';
 
-describe('src/cgx', () => {
+describe('src/tpm', () => {
     let sandbox: sinon.SinonSandbox;
     let showTitleAndBannerStub: sinon.SinonStub;
     let providerQuestionStub: sinon.SinonStub;
@@ -41,29 +41,29 @@ describe('src/cgx', () => {
     });
 
     it('should always call showTitleAndBanner and providerQuestion', async () => {
-        await CGX();
+        await TPM();
         expect(showTitleAndBannerStub).to.be.calledOnce;
         expect(providerQuestionStub).to.be.calledOnce;
     });
 
     it(`should call gitLabActions actions if chosen`, async () => {
         mockAnswer.provider = ProviderValue.GITLAB;
-        const cgx: Promise<any> = await CGX();
+        const cgx: Promise<any> = await TPM();
         expect(gitlabActionStub).to.be.calledOnce;
     })
     it(`should call github actions if chosen`, async () => {
         mockAnswer.provider = ProviderValue.GITHUB;
-        const cgx: Promise<any> = await CGX();
+        const cgx: Promise<any> = await TPM();
         expect(githubActionStub).to.be.calledOnce;
     })
     it(`should call codecommit actions if chosen`, async () => {
         mockAnswer.provider = ProviderValue.CODECOMMIT;
-        const cgx: Promise<any> = await CGX();
+        const cgx: Promise<any> = await TPM();
         expect(codecommitActionStub).to.be.calledOnce;
     })
     it(`should call bitbucket actions if chosen`, async () => {
         mockAnswer.provider = ProviderValue.BITBUCKET;
-        const cgx: Promise<any> = await CGX();
+        const cgx: Promise<any> = await TPM();
         expect(bitbucketActionStub).to.be.calledOnce;
     })
 
