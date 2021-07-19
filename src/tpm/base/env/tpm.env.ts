@@ -13,7 +13,6 @@ export enum TPMGLOBALS{
     NPM="https://registry.npmjs.org/-/package/tpm/dist-tags",
 }
 
-console.log("there i am in");
 /**
  * class for handling all globel variables for tpm 
  * 
@@ -30,7 +29,6 @@ export class TpmEnviroment implements ITpmConfigSettings{
      constructor(){
      TpmEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE,LocalPaths.USERROOT,LocalPaths.TPMCONFIG,'tpm.json');
      TpmEnviroment._settingsJson = this.loadLocalSettings();
-     console.log(TpmEnviroment._settingsJson);
      TpmEnviroment._isUpToDate = compareVersions(TpmEnviroment._settingsJson);
      TpmEnviroment._isnewUser = TpmEnviroment._settingsJson.isnewUser;
     

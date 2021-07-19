@@ -3,7 +3,7 @@ import { LoginCredentials } from '../../models/answers.model';
 import { InputTypeText } from '../../models/input.model';
 
 
-export const newProjectQuestion = async (): Promise<LoginCredentials> => {
+export const newLoginQuestion = async (): Promise<LoginCredentials> => {
 
     const questions: InputTypeText[] = [
         {
