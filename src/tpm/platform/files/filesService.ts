@@ -1,5 +1,6 @@
+import { promises } from "node:fs";
 import { Path } from "../../base/utils/path";
-import { FileDeleteOptions, FileType, IFileService, IFileStat, IFilewrite, } from "./files";
+import { FileDeleteOptions, FileType, FileWriteOptions, IFileService, IFileStat, IFilewrite, } from "./files";
 
 
 
@@ -21,5 +22,9 @@ class FilesServices implements IFileService {
     }
     rename(from: Path, to: Path, opts: IFilewrite): Promise<void> {
         throw new Error("Method not implemented.");
+    }
+    writeFile(resource: Path, content: Uint8Array, opts: FileWriteOptions):Promise<void>{
+        
+        
     }
 }

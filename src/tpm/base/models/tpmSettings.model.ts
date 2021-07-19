@@ -1,6 +1,7 @@
 export interface ITpmConfigSettings{
     getversion?:()=>string,
     getsupportedframework?:()=>IFrameworks[],
+    updatesettings?:()=>void
 
     
 }
@@ -12,7 +13,9 @@ export interface IFrameworks{
 }
 
 export interface Settings{
+    isnewUser: boolean;
     version:string,
-    isupdate:number,
-    supportedframeworks:IFrameworks[]
+    supportedframeworks:IFrameworks[],
+
+
 }

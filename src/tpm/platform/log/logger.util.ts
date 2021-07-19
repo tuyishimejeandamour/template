@@ -1,14 +1,18 @@
 import { red, green, cyan } from 'kleur';
 import * as figlet from 'figlet';
 import { ConsoleMessage } from '../../base/models/message.model';
+import { TpmEnviroment } from '../../base/env/tpm.env';
 
 
 const newLine = '\n';
 
 export const showTitleAndBanner = (): void => {
-    
+    if (TpmEnviroment._isnewUser) {
     console.log(cyan(figlet.textSync(ConsoleMessage.TITLE, { horizontalLayout: 'full' })));
     console.info(cyan(ConsoleMessage.BANNER));
+   
+    }
+    
 }
 
 export const showError = (message: string | Error): void => {
