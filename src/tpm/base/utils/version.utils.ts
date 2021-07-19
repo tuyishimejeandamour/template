@@ -33,7 +33,7 @@ export function checkForLatestVersion():Promise<any>{
   checkForLatestVersion()
     .catch(() => {
       try {
-        return execSync('npm view create-react-app version').toString().trim();
+        return execSync('npm view tpm version').toString().trim();
       } catch (e) {
         return null;
       }
