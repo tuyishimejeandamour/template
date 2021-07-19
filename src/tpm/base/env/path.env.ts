@@ -8,6 +8,7 @@ export const LocalPaths = {
     TEMP:isDefined(process.env.TEMP)?process.env.TEMP :'',
     SYSTEMDRIVE:isDefined(process.env.SystemDrive)? process.env.SystemDrive :'',
     LOCALAPPDATA:isDefined(process.env.LOCALAPPDATA)?process.env.LOCALAPPDATA :'',
-    TPMCONFIG:'.tpmconfig'
+    TPMCONFIG:'.tpmconfig',
+    HOMEDRIVE:isDefined(process.env.HOMEDRIVE)?process.env.HOMEDRIVE:'',
 
 }

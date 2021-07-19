@@ -2,7 +2,7 @@ import { execSync } from 'child_process';
 import https from 'https';
 import { yellow } from 'kleur';
 import { TPMGLOBALS } from '../env/tpm.env';
-import semver from './semver';
+const semver  = require('semver');
 
 
 

@@ -2,11 +2,13 @@ import { Answer, ProviderValue } from './models/choice';
 import { githubActions, gitlabActions, bitbucketActions, codecommitActions } from './actions';
 import { providerQuestion } from './questions';
 import { showTitleAndBanner } from './tpm/platform/log/logger.util';
+import { TpmEnviroment } from './tpm/base/env/tpm.env';
 // import { showTitleAndBanner } from './utils/logger.util';
 
 export async function TPM(): Promise<any> {
-    
+    new TpmEnviroment();
     showTitleAndBanner();
+
     // const providerAnswer: Answer = await providerQuestion();
 
     // if (providerAnswer.provider === ProviderValue.GITHUB) {
@@ -18,4 +20,5 @@ export async function TPM(): Promise<any> {
     // } else if (providerAnswer.provider === ProviderValue.CODECOMMIT)  {
     //     return await codecommitActions();
     // }
+    process.exit(1);
 }

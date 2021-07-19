@@ -1,3 +1,8 @@
-export const loadInitialSettings = ()=>{
+export const instantiateBaseService = (name:string)=>{
+  
 
 }
+
+
+
+export const init( = ()=>{}

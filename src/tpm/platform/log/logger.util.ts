@@ -10,9 +10,8 @@ export const showTitleAndBanner = (): void => {
     if (TpmEnviroment._isnewUser) {
     console.log(cyan(figlet.textSync(ConsoleMessage.TITLE, { horizontalLayout: 'full' })));
     console.info(cyan(ConsoleMessage.BANNER));
-   
     }
-    
+   
 }
 
 export const showError = (message: string | Error): void => {

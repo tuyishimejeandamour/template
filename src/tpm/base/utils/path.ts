@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 
 export class Path {
     declare private _path:string;
@@ -14,12 +14,26 @@ export class Path {
         return this._path;
     }
   
-    get getExtension(){
+    get getfilename(){
+        if (fs.statSync(this._path).isDirectory()) {
+            return null
+        }
         if (this.isWindowsPath) {
             return this._path.split('\\\\').pop();
         }
 
         return this._path.split('/').pop();
+    }
+    get getextension(){
+         
+        if (fs.statSync(this._path).isDirectory()) {
+            return null
+        }
+        if (this.isWindowsPath) {
+            return this._path.split('.').pop();
+        }
+
+        return this._path.split('.').pop();
     }
 
     get isWindowsPath(): boolean {
