@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import https from 'https';
 import { yellow } from 'kleur';
+import { TPMGLOBALS } from '../env/tpm.env';
 import semver from './semver';
 
 
@@ -9,7 +10,7 @@ export function checkForLatestVersion():Promise<any>{
     return new Promise((resolve, reject) => {
       https
         .get(
-          'https://registry.npmjs.org/-/package/create-react-app/dist-tags',
+          `${TPMGLOBALS.NPM}`,
           res => {
             if (res.statusCode === 200) {
               let body = '';
@@ -33,7 +34,7 @@ export function checkForLatestVersion():Promise<any>{
   checkForLatestVersion()
     .catch(() => {
       try {
-        return execSync('npm view tpm version').toString().trim();
+        return execSync(`npm view ${TPMGLOBALS.COMMAND} version`).toString().trim();
       } catch (e) {
         return null;
       }
@@ -43,20 +44,20 @@ export function checkForLatestVersion():Promise<any>{
         console.log();
         console.error(
           yellow(
-            `You are running \`create-react-app\` ${packageJson.version}, which is behind the latest release (${latest}).\n\n` +
-              'We no longer support global installation of Create React App.'
+            `You are running \`${TPMGLOBALS.COMMAND}\` ${packageJson.version}, which is behind the latest release (${latest}).\n\n` +
+              'We no longer support global installation of TPM.'
           )
         );
         console.log();
         console.log(
           'Please remove any global installs with one of the following commands:\n' +
-            '- npm uninstall -g create-react-app\n' +
-            '- yarn global remove create-react-app'
+            `- npm uninstall -g ${TPMGLOBALS.COMMAND}\n` +
+            `- yarn global remove ${TPMGLOBALS.COMMAND}`
         );
         console.log();
         console.log(
           'The latest instructions for creating a new app can be found here:\n' +
-            'https://create-react-app.dev/docs/getting-started/'
+            `${TPMGLOBALS.DOCURI}`
         );
         console.log();
         returnvalue = false;

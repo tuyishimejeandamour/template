@@ -5,6 +5,13 @@ import { IFrameworks, ITpmConfigSettings, Settings } from '../models/tpmSettings
 import { compareVersions } from '../utils/version.utils';
 import { LocalPaths } from './path.env'
 
+
+export enum TPMGLOBALS{
+    COMMAND='tpm',
+    DOCURI="https://tpm.com/documentation/getting-started/",
+    SITE="https://tpm.com",
+    NPM="https://registry.npmjs.org/-/package/tpm/dist-tags"
+}
 /**
  * class for handling all globel variables for tpm 
  */
