@@ -1,4 +1,4 @@
-import { red, green, cyan } from 'kleur';
+import { red, green, cyan, yellow, blue } from 'kleur';
 import * as figlet from 'figlet';
 import { ConsoleMessage } from '../../base/models/message.model';
 import { TpmEnviroment } from '../../base/env/tpm.env';
@@ -40,4 +40,30 @@ export const showUpdate = (fileName: string, filePath: string): void => {
     filePath
     ? console.log(green(ConsoleMessage.UPDATE) + `${fileName} in ${filePath}`)
     : console.log(green(ConsoleMessage.UPDATE) + `${fileName}`);
+}
+
+export const usage = ():void =>{
+    console.log(`
+    TPM helps you get template into your project.
+  
+    usage:
+      ${yellow('tpm')} <command>
+  
+      ${blue('commands can be')}:
+  
+      new:      used to create a new tpm template project
+      create:   used to create  template form existing project
+      help:     used to print the usage guide
+      info:     used to provide all info of tpm application on your server
+
+      ${blue('other')}:
+       
+      usage:
+      ${yellow('tpm')} new <command>
+      
+      template: used by default when new command used
+      extension:used to create extension for tpm
+    
+    
+    `)
 }

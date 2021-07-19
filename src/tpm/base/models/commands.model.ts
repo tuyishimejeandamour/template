@@ -1,11 +1,11 @@
 
-export enum BASECOMMANDS {
-    NEW = 'new',
-    CREARE = 'create',
-    HELP = 'help',
-    VERSION = '--version',
-    INFO = 'info'
-}
+export const BASECOMMANDS:string[] = [
+    'new',
+    'create',
+    'help',
+    '--version',
+    'info'
+]
 
 export enum SECONDARY {
     EXTENSION = 'extension',
