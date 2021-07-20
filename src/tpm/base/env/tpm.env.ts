@@ -29,7 +29,7 @@ export class TpmEnviroment implements ITpmConfigSettings{
      constructor(){
      TpmEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE,LocalPaths.USERROOT,LocalPaths.TPMCONFIG,'tpm.json');
      TpmEnviroment._settingsJson = this.loadLocalSettings();
-     TpmEnviroment._isUpToDate = compareVersions(TpmEnviroment._settingsJson);
+     //TpmEnviroment._isUpToDate = compareVersions(TpmEnviroment._settingsJson);
      TpmEnviroment._isnewUser = TpmEnviroment._settingsJson.isnewUser;
     
     }

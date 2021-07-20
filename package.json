@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "./lib/index.js",
   "bin": {
-    "cgx": "bin/cgx"
+    "tpm": "bin/tpm"
   },
   "keywords": [
     "cli",
