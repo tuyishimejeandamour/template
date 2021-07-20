@@ -17,6 +17,5 @@ export enum SECONDARY {
 
 export enum FLAGS {
     T = '-t',
-    F = '-f',
-    
+    E = '-e',
 }

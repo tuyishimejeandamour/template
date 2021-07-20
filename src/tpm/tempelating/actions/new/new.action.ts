@@ -2,6 +2,13 @@ import { NewTemplateAnswer } from "../../../base/models/answers.model";
 import { newProjectQuestion } from "../../../base/questions/open/newTemplate.question";
 
 
+export interface TemplateService{
+    asktemplatequestion:()=>void;
+    createtemplateJson:()=>void;
+    watchPackageJson:()=>void;
+
+}
+
 
 export class  NewTemplate  {
     

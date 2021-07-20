@@ -1,8 +1,9 @@
 import { showError, showTitleAndBanner, usage } from './tpm/platform/log/logger.util';
 import { TpmEnviroment } from './tpm/base/env/tpm.env';
 import { checkparsedargv } from './tpm/tempelating/args.tempelate';
-import { BASECOMMANDS } from './tpm/base/models/commands.model';
+import { BASECOMMANDS, FLAGS, SECONDARY } from './tpm/base/models/commands.model';
 import { blue } from 'kleur';
+import { NewTemplateService } from './tpm/tempelating/actions/new/newServices.action';
 
 
 export async function TPM(): Promise<any> {
@@ -21,6 +22,13 @@ export async function TPM(): Promise<any> {
         }
         else if (passedargv[0] == BASECOMMANDS.NEW) {
             showTitleAndBanner();
+            if (passedargv[1] == SECONDARY.EXTENSION || passedargv[1] == FLAGS.E) {
+                
+            }else{
+                const newtemplate = new NewTemplateService();
+                newtemplate.asktemplatequestion();
+            }
+            
         }
         else if (passedargv[0] == BASECOMMANDS.CREATE) {
             showTitleAndBanner();
