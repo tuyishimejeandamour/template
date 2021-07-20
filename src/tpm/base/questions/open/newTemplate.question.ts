@@ -1,11 +1,8 @@
 import inquirer from 'inquirer';
-import { NewProjectAnswer } from '../../models/answers.model';
+import {  NewTemplateAnswer } from '../../models/answers.model';
 import { InputTypeText } from '../../models/input.model';
 
-
-//import { Answer, UniversalChoiceValue, Choice } from '../models/choice';
-
-export async function newProjectQuestion(): Promise<NewProjectAnswer> {
+export async function newProjectQuestion(): Promise<NewTemplateAnswer> {
       const question:InputTypeText[] =[
           {
             name: 'project',
@@ -84,12 +81,6 @@ export async function newProjectQuestion(): Promise<NewProjectAnswer> {
             type: 'input',
             message: 'version(0.0.1):',
             default:'0.0.1'
-          },
-          {
-            name: 'license',
-            type: 'input',
-            message: 'license(ISC):',
-            default:'ISC'
           }
     ];
 

@@ -1,4 +1,4 @@
-export interface NewProjectAnswer{
+export interface NewTemplateAnswer{
     project:string,
     framework:string,
     description:string,
