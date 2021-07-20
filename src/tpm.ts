@@ -2,6 +2,7 @@ import { showError, showTitleAndBanner, usage } from './tpm/platform/log/logger.
 import { TpmEnviroment } from './tpm/base/env/tpm.env';
 import { checkparsedargv } from './tpm/tempelating/args.tempelate';
 import { BASECOMMANDS } from './tpm/base/models/commands.model';
+import { blue } from 'kleur';
 
 
 export async function TPM(): Promise<any> {
@@ -32,7 +33,7 @@ export async function TPM(): Promise<any> {
         }else{
         showError(`
       
-      ${passedargv[0]} The command '${passedargv[0]}' is not recognized as the name of a  operable command. Check the spelling of the name
+      ${blue(passedargv[0])}: The command '${passedargv[0]}' is not recognized as the name of a  operable command. Check the spelling of the name
       
       `);
       process.exit(1) 
