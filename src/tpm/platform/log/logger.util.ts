@@ -6,10 +6,15 @@ import { TpmEnviroment } from '../../base/env/tpm.env';
 
 const newLine = '\n';
 
-export const showTitleAndBanner = (): void => {
-    if (TpmEnviroment._isnewUser) {
+export const showTitleAndBanner = (val:boolean = false): void => {
+    if (TpmEnviroment._isnewUser && !val) {
     console.log(cyan(figlet.textSync(ConsoleMessage.TITLE, { horizontalLayout: 'full' })));
     console.info(cyan(ConsoleMessage.BANNER));
+    TpmEnviroment._settingsJson.isnewUser = false;
+    TpmEnviroment.updatesettings()
+    }else{
+        console.log(cyan(figlet.textSync(ConsoleMessage.TITLE, { horizontalLayout: 'full' })));
+        console.info(cyan(ConsoleMessage.BANNER));
     }
    
 }

@@ -26,9 +26,11 @@ export class TpmEnviroment implements ITpmConfigSettings{
     declare static _isUpToDate:boolean;
     declare static _isnewUser:boolean;
     declare static _settingPath:string;
+    private static local_settings:Settings;
      constructor(){
      TpmEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE,LocalPaths.USERROOT,LocalPaths.TPMCONFIG,'tpm.json');
      TpmEnviroment._settingsJson = this.loadLocalSettings();
+     TpmEnviroment.local_settings = this.loadLocalSettings();
      //TpmEnviroment._isUpToDate = compareVersions(TpmEnviroment._settingsJson);
      TpmEnviroment._isnewUser = TpmEnviroment._settingsJson.isnewUser;
     
@@ -43,20 +45,18 @@ export class TpmEnviroment implements ITpmConfigSettings{
     };
     
     
-   loadLocalSettings():Settings{
+    loadLocalSettings():Settings{
     return JSON.parse(fs.readFileSync(TpmEnviroment._settingPath).toString())
    }
    
-   updatesettings():void{
-       if (Objectequals(TpmEnviroment._settingsJson,this.loadLocalSettings())) {
+   static updatesettings():void{
+       if (Objectequals(TpmEnviroment._settingsJson,TpmEnviroment.local_settings)) {
            return;
        }else{
          const content = JSON.stringify(TpmEnviroment._settingsJson,null,2);
-
-         fs.writeFile(TpmEnviroment._settingPath,content,(error:any)=>{
-             throw new Error(error.message); 
-         })
+         fs.writeFileSync(TpmEnviroment._settingPath,content)
        }
    }
+   
 
 }

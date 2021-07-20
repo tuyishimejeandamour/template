@@ -8,14 +8,6 @@ export function index(): Promise<any> {
   const af = _args[2]
   if (isDefined(_args[2])) {
 
-    // if (BASECOMMANDS.indexOf(af) == -1) {
-    //   showError(`
-      
-    //   ${af} The command '${af}' is not recognized as the name of a  operable command. Check the spelling of the name
-      
-    //   `);
-    //   process.exit(1)
-    // } else {
       return TPM();
     
   } else {

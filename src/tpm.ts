@@ -1,49 +1,43 @@
-import { showTitleAndBanner, usage } from './tpm/platform/log/logger.util';
+import { showError, showTitleAndBanner, usage } from './tpm/platform/log/logger.util';
 import { TpmEnviroment } from './tpm/base/env/tpm.env';
-import { newLoginQuestion } from './tpm/base/questions/open/login.question';
 import { checkparsedargv } from './tpm/tempelating/args.tempelate';
 import { BASECOMMANDS } from './tpm/base/models/commands.model';
 
 
 export async function TPM(): Promise<any> {
     new TpmEnviroment();
-    showTitleAndBanner();
     const passedargv = checkparsedargv();
-    console.log(passedargv);
     if (passedargv) {
         if (passedargv[0] == BASECOMMANDS.INFO) {
+            showTitleAndBanner(true);
             usage();
         }
         else if (passedargv[0] == BASECOMMANDS.HELP) {
-            
+            showTitleAndBanner();
         }
         else if (passedargv[0] == BASECOMMANDS.VERSION) {
-            
+            showTitleAndBanner();
         }
         else if (passedargv[0] == BASECOMMANDS.NEW) {
-            
+            showTitleAndBanner();
         }
         else if (passedargv[0] == BASECOMMANDS.CREATE) {
-            
+            showTitleAndBanner();
         }
         else if (passedargv[0] == BASECOMMANDS.INSTALL || passedargv[0] == BASECOMMANDS.I) {
-            
+            showTitleAndBanner();
         }
         else if (passedargv[0] == BASECOMMANDS.PUBLISH) {
-            
+            showTitleAndBanner();
+        }else{
+        showError(`
+      
+      ${passedargv[0]} The command '${passedargv[0]}' is not recognized as the name of a  operable command. Check the spelling of the name
+      
+      `);
+      process.exit(1) 
         }
         
     }
-    const providerAnswer = await newLoginQuestion();
-     console.log(providerAnswer)
-    // if (providerAnswer.provider === ProviderValue.GITHUB) {
-    //     return await githubActions();
-    // } else if (providerAnswer.provider === ProviderValue.GITLAB)  {
-    //     return await gitlabActions();
-    // } else if (providerAnswer.provider === ProviderValue.BITBUCKET)  {
-    //     return await bitbucketActions();
-    // } else if (providerAnswer.provider === ProviderValue.CODECOMMIT)  {
-    //     return await codecommitActions();
-    // }
     process.exit(1);
 }
