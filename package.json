@@ -7,7 +7,7 @@
   "license": "MIT",
   "main": "./lib/index.js",
   "bin": {
-    "tpm": "bin/tpm"
+    "template": "bin/template"
   },
   "keywords": [
     "cli",
@@ -27,7 +27,7 @@
     "test:unit": "nyc mocha",
     "lint": "tslint -p . --fix",
     "build": "npm run clean:some && tsc -p .",
-    "global": "node bin\\cgx",
+    "global": " npm i -g & template",
     "clean:some": "rm -rf ./lib ./docs",
     "clean:all": "rm -rf ./node_modules ./package-lock.json ./lib ./docs",
     "refresh": "npm run clean:all && npm install",
