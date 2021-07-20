@@ -20,13 +20,14 @@ export async function TPM(): Promise<any> {
         else if (passedargv[0] == BASECOMMANDS.VERSION) {
             showTitleAndBanner();
         }
-        else if (passedargv[0] == BASECOMMANDS.NEW) {
+        else if (passedargv[0] == BASECOMMANDS.NEW || passedargv[0] == BASECOMMANDS.INIT) {
             showTitleAndBanner();
             if (passedargv[1] == SECONDARY.EXTENSION || passedargv[1] == FLAGS.E) {
                 
             }else{
                 const newtemplate = new NewTemplateService();
-                newtemplate.asktemplatequestion();
+                newtemplate.newtemplate  = await newtemplate.asktemplatequestion();
+                newtemplate.createtemplateJson();
             }
             
         }

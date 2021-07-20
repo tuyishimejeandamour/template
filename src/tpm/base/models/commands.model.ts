@@ -7,7 +7,8 @@ export enum BASECOMMANDS{
     INFO    = 'info',
     INSTALL = 'install',
     I = 'install',
-    PUBLISH = 'publish'
+    PUBLISH = 'publish',
+    INIT = 'init'
 }
 
 export enum SECONDARY {

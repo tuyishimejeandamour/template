@@ -1,4 +1,5 @@
 import fs from 'fs-extra'
+import path from 'path'
 
 export class Path {
     declare private _path:string;
@@ -53,5 +54,14 @@ export class Path {
             return this._path.split('\\\\');
         }
         return this._path.split('/');
+    }
+
+    join(...args:any[]){
+      let joinpaths = '';
+      args.forEach(arg => {
+          joinpaths = path.join(joinpaths,arg);
+      });
+
+      return path.join(this.path,joinpaths);
     }
   }
