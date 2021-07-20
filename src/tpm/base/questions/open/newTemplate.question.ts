@@ -40,6 +40,13 @@ export async function newProjectQuestion(): Promise<NewTemplateAnswer> {
             message: 'category:',
             
           },
+          
+          {
+            name: 'keyword',
+            type: 'input',
+            message: 'keywords:',
+            
+          },
           {
             name: 'author',
             type: 'input',
@@ -79,7 +86,7 @@ export async function newProjectQuestion(): Promise<NewTemplateAnswer> {
           {
             name: 'version',
             type: 'input',
-            message: 'version(0.0.1):',
+            message: 'version:',
             default:'0.0.1'
           }
     ];

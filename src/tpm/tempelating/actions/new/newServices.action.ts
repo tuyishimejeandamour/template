@@ -18,8 +18,9 @@ export class NewTemplateService extends NewTemplate implements TemplateService {
     async createtemplateJson(){
         const path = new Path(this.currentPath)
         const filepath = path.join('template.json');
-
+         
          if (isUndefined(this.templateInfo)) {
+
              fs.writeJSONSync(filepath,this.newtemplate)
          }else
          {
