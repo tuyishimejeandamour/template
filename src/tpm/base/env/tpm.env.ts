@@ -7,7 +7,7 @@ import { compareVersions } from '../utils/version.utils';
 import { LocalPaths } from './path.env'
 
 export enum TPMGLOBALS{
-    COMMAND='tpm',
+    COMMAND='template',
     DOCURI="https://tpm.com/documentation/getting-started/",
     SITE="https://tpm.com",
     NPM="https://registry.npmjs.org/-/package/tpm/dist-tags",
