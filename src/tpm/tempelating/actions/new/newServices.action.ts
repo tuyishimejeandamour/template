@@ -24,7 +24,6 @@ export class NewTemplateService extends NewTemplate implements TemplateService {
              fs.writeJSONSync(filepath,this.newtemplate)
          }else
          {
-          
           updatejsonfile(filepath,this.templateInfo,this.newtemplate);
            
          }
