@@ -1,6 +1,6 @@
 import { showError, showTitleAndBanner, usage } from './tpm/platform/log/logger.util';
 import { TpmEnviroment } from './tpm/base/env/tpm.env';
-import { checkparsedargv } from './tpm/tempelating/args.tempelate';
+import { checkparsedargv } from './tpm/tempelating/args.template';
 import { BASECOMMANDS, FLAGS, SECONDARY } from './tpm/base/models/commands.model';
 import { blue } from 'kleur';
 import { NewTemplateService } from './tpm/tempelating/actions/new/newServices.action';
