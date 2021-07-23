@@ -2,6 +2,7 @@ import { blue, cyan, green, red } from "kleur";
 import { validateTemplateName } from "../../base/utils/node.utils";
 import fs from "fs-extra";
 import path from "path";
+import * as semver from 'semver';
 export function checkTemplateName(templateName:string) {
     const validationResult = validateTemplateName(templateName);
     if (!validationResult.validForNewPackages) {
@@ -110,3 +111,14 @@ export function isSafeToCreateProjectIn(root:string, name:string) {
     });
     return true;
   }
+
+  export function validateVersion(version: string): void {
+    if (!version) {
+      throw new Error(`Missing extension version`);
+    }
+  
+    if (!semver.valid(version)) {
+      throw new Error(`Invalid extension version '${version}'`);
+    }
+  }
+  

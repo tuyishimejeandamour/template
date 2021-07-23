@@ -13,7 +13,7 @@ interface IOptions {
 
 
 
-function exec(
+export function exec(
 	command: string,
 	options: IOptions = {},
 	cancellationToken?: Token
@@ -167,7 +167,7 @@ export function getRepository(url: string | { type?: string; url?: string}| unde
 export const isGitHubRepository = (repository: string): boolean=> {
 	return /^https:\/\/github\.com\/|^git@github\.com:/.test(repository || '');
 }
-function checkNPM(cancellationToken?: Token): Promise<void> {
+export function checkNPM(cancellationToken?: Token): Promise<void> {
 	return exec('npm -v', {}, cancellationToken).then(({ stdout }) => {
 		const version = stdout.trim();
 
@@ -175,6 +175,21 @@ function checkNPM(cancellationToken?: Token): Promise<void> {
 			return Promise.reject(`npm@${version} doesn't work with vsce. Please update npm: npm install -g npm`);
 		}
 	});
+}
+export function checkYARN(cancellationToken?: Token): Promise<boolean> {
+  let isInstalled = false;
+	exec('yarn -v', {}, cancellationToken).then(({ stdout }) => {
+		const version = stdout.trim();
+
+		if (version) {
+			isInstalled = true;
+		}
+	}).catch(_=>{
+
+  }
+  );
+
+return Promise.resolve(isInstalled);
 }
 export function getLatestVersion(name: string, cancellationToken?: Token): Promise<string> {
 	return checkNPM(cancellationToken)
@@ -185,3 +200,8 @@ export function getLatestVersion(name: string, cancellationToken?: Token): Promi
 function parseStdout({ stdout }: { stdout: string }): string {
 	return stdout.split(/[\r\n]/).filter(line => !!line)[0];
 }
+
+export function flatten<T>(arr:T[][]): T[] {
+	return [].concat.apply([], arr as never[][]) as T[];
+}
+

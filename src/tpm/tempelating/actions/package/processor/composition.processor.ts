@@ -3,10 +3,11 @@ import { IPackageTemplate } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { getRepository, getUrl, isGitHubRepository } from "../../../../base/utils/node.utils";
 import { Path } from "../../../../base/utils/path";
+import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
 import { showWarn } from "../../../../platform/log/logger.util";
 import { BaseProcessor, IFile, IPackageOptions } from "./base.processor";
 
-export class ManifestProcessor extends BaseProcessor {
+export class CompositionProcessor extends BaseProcessor {
 	constructor(composition: IPackageTemplate, options: IPackageOptions = {}) {
 		super(composition);
 
@@ -79,6 +80,23 @@ export class ManifestProcessor extends BaseProcessor {
 			}
 		}
 	}
-    
+    static validatecomposition(composition: IPackageTemplate): IPackageTemplate {
+		checkTemplateName(composition.name);
+	
+		if (!composition.version) {
+			throw new Error('Manifest missing field: version');
+		}
+	
+		validateVersion(composition.version);
+	
+		const hasMain = !!composition.main;
+
+       if ( !hasMain) {
+			throw new Error("composition needs the 'main' property");
+		} 
+	
+	
+		return composition;
+	}
 }
 

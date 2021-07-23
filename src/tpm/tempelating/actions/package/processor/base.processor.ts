@@ -25,6 +25,9 @@ export interface IProcessor {
 	tags: string[];
 	template: any;
 }
+export interface ITranslations {
+	[key: string]: string;
+}
 export interface IPackageOptions {
 	readonly packagePath?: string;
 	readonly version?: string;

@@ -1,0 +1,30 @@
+export const defaultignorefileandfolder = [
+    '.tempignore',
+	'package-lock.json',
+	'yarn.lock',
+	'npm-shrinkwrap.json',
+	'.editorconfig',
+	'.npmrc',
+	'.yarnrc',
+	'.gitattributes',
+	'*.todo',
+	'tslint.yaml',
+	'.eslintrc*',
+	'.babelrc*',
+	'.prettierrc',
+	'webpack.config.js',
+	'ISSUE_TEMPLATE.md',
+	'CONTRIBUTING.md',
+	'PULL_REQUEST_TEMPLATE.md',
+	'CODE_OF_CONDUCT.md',
+	'.github',
+	'.travis.yml',
+	'appveyor.yml',
+	'**/.git/**',
+	'**/.DS_Store',
+    '.idea',
+	'.vscode',
+
+]
+
+export const notIgnored = ['!template.json', '!README.md'];

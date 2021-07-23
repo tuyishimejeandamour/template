@@ -30,7 +30,6 @@ export interface IPackageTemplate {
 	license?: string;
 	contributors?: string | TemplateUser[];
 	main?: string;
-	browser?: string;
 	repository?: string | { type?: string; url?: string };
 	dependencies?: { [name: string]: string };
 	devDependencies?: { [name: string]: string };
