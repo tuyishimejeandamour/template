@@ -1,5 +1,5 @@
 import { NewTemplateAnswer } from "../../../base/models/answers.model";
-import { TemplateSettings } from "../../../base/models/template.model";
+import { IPackageTemplate } from "../../../base/models/template.model";
 import { newProjectQuestion } from "../../../base/questions/open/newTemplate.question";
 import { Path } from "../../../base/utils/path";
 import { readfileExist } from "../../../platform/files/file.platform";
@@ -18,7 +18,7 @@ export abstract class  NewTemplate  {
      private _newtemplate: NewTemplateAnswer  = Object.create(null);
      currentPath:string = process.cwd();
      overwrite:boolean = false;
-     private _templateSettings:TemplateSettings = Object.create(null);
+     private _templateSettings:IPackageTemplate = Object.create(null);
      
 
     constructor() {
@@ -38,7 +38,7 @@ export abstract class  NewTemplate  {
       return this._templateSettings
     }
 
-    set templateSettings(tems:TemplateSettings){
+    set templateSettings(tems:IPackageTemplate){
       this._templateSettings = tems
     }
 
@@ -46,7 +46,7 @@ export abstract class  NewTemplate  {
      return await newProjectQuestion();
     }
 
-    readTpmIfexit():TemplateSettings | undefined {
+    readTpmIfexit():IPackageTemplate | undefined {
      return readfileExist(new Path(this.currentPath).join('template.json'))
     }
 

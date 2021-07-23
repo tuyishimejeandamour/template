@@ -32,6 +32,9 @@ export const showSuccess = (message: string): void => {
 export const showInfo = (message: string): void => {
     console.info(cyan(ConsoleMessage.INFO) + message + newLine);
 }
+export const showWarn = (message: string): void => {
+    console.info(yellow(ConsoleMessage.INFO) + message + newLine);
+}
 
 export const showGenerate = (fileName: string): void => {
     console.log(cyan(ConsoleMessage.GENERATE) + `${fileName}...`);

@@ -1,6 +1,5 @@
 import fs from 'fs-extra'
 import path from 'path'
-import { TemplateSettings } from '../../base/models/template.model';
 import { Path } from '../../base/utils/path';
 import { Objectequals } from '../checking/types.checking';
 
@@ -22,7 +21,7 @@ export const updatejsonfile = (filepath:string,old:any,newjson:any)=>{
 
 }
 
-export const readfileExist = (path:string):TemplateSettings | undefined =>{
+export const readfileExist = (path:string):any | undefined =>{
    if (fs.pathExistsSync(path)) {
     return fs.readJSONSync(path);
    }else{

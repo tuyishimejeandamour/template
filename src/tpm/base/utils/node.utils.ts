@@ -1,5 +1,5 @@
 import * as cp from 'child_process';
-import { CancellationToken } from './token.utils';
+import { Token } from './token.utils';
 
 interface IOptions {
 	cwd?: string;
@@ -16,7 +16,7 @@ interface IOptions {
 function exec(
 	command: string,
 	options: IOptions = {},
-	cancellationToken?: CancellationToken
+	cancellationToken?: Token
 ): Promise<{ stdout: string; stderr: string }> {
 	return new Promise((c, e) => {
 		let disposeCancellationListener: Function;
@@ -135,4 +135,53 @@ function exec(
     // if (!result.errors.length) delete result.errors
     return result
   }
+
+export const  getUrl = (url: string | { url?: string } |undefined): string | null => {
+    if (!url) {
+      return null;
+    }
   
+    if (typeof url === 'string') {
+      return <string>url;
+    }
+  
+    return (<any>url).url;
+  }
+  
+export function getRepository(url: string | { type?: string; url?: string}| undefined): string {
+  let urln;
+  if(url){
+     urln = getUrl(url);
+  }
+
+	const result = urln ? urln:'';
+  
+
+	if (/^[^\/]+\/[^\/]+$/.test(result) && result.length>0) {
+		return `https://github.com/${result}.git`;
+	}
+
+	return result;
+}
+
+export const isGitHubRepository = (repository: string): boolean=> {
+	return /^https:\/\/github\.com\/|^git@github\.com:/.test(repository || '');
+}
+function checkNPM(cancellationToken?: Token): Promise<void> {
+	return exec('npm -v', {}, cancellationToken).then(({ stdout }) => {
+		const version = stdout.trim();
+
+		if (/^3\.7\.[0123]$/.test(version)) {
+			return Promise.reject(`npm@${version} doesn't work with vsce. Please update npm: npm install -g npm`);
+		}
+	});
+}
+export function getLatestVersion(name: string, cancellationToken?: Token): Promise<string> {
+	return checkNPM(cancellationToken)
+		.then(() => exec(`npm show ${name} version`, {}, cancellationToken))
+		.then(parseStdout);
+}
+
+function parseStdout({ stdout }: { stdout: string }): string {
+	return stdout.split(/[\r\n]/).filter(line => !!line)[0];
+}

@@ -1,5 +1,5 @@
 const CancelledError = 'Cancelled';
-export class CancellationToken {
+export class Token {
 	private listeners: Function[] = [];
 	private _cancelled: boolean = false;
 	get isCancelled(): boolean {

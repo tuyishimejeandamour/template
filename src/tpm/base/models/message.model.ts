@@ -7,5 +7,6 @@ export enum ConsoleMessage {
     GENERATE = 'GENERATE: ',
     CREATE = 'CREATE: ',
     UPDATE = 'UPDATE: ',
+    WARN ='WARN',
     START_GENERATING = 'Start generating a component...',
 }

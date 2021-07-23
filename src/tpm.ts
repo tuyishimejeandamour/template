@@ -1,53 +1,50 @@
-import { showError, showTitleAndBanner, usage } from './tpm/platform/log/logger.util';
-import { TpmEnviroment } from './tpm/base/env/tpm.env';
-import { checkparsedargv } from './tpm/tempelating/args.template';
-import { BASECOMMANDS, FLAGS, SECONDARY } from './tpm/base/models/commands.model';
-import { blue } from 'kleur';
-import { NewTemplateService } from './tpm/tempelating/actions/new/newServices.action';
+import {  showInfo } from './tpm/platform/log/logger.util';
+import { Token } from './tpm/base/utils/token.utils';
+import { isatty } from 'tty';
+import * as semver from 'semver';
+import { getLatestVersion } from './tpm/base/utils/node.utils';
+const pkg = require('../package.json');
 
 
-export async function TPM(): Promise<any> {
-    new TpmEnviroment();
-    const passedargv = checkparsedargv();
-    if (passedargv) {
-        if (passedargv[0] == BASECOMMANDS.INFO) {
-            showTitleAndBanner(true);
-            usage();
-        }
-        else if (passedargv[0] == BASECOMMANDS.HELP) {
-            showTitleAndBanner();
-        }
-        else if (passedargv[0] == BASECOMMANDS.VERSION) {
-            showTitleAndBanner();
-        }
-        else if (passedargv[0] == BASECOMMANDS.NEW || passedargv[0] == BASECOMMANDS.INIT) {
-            showTitleAndBanner();
-            if (passedargv[1] == SECONDARY.EXTENSION || passedargv[1] == FLAGS.E) {
-                
-            }else{
-                const newtemplate = new NewTemplateService();
-                newtemplate.newtemplate  = await newtemplate.asktemplatequestion();
-                newtemplate.createtemplateJson();
-            }
-            
-        }
-        else if (passedargv[0] == BASECOMMANDS.CREATE) {
-            showTitleAndBanner();
-        }
-        else if (passedargv[0] == BASECOMMANDS.INSTALL || passedargv[0] == BASECOMMANDS.I) {
-            showTitleAndBanner();
-        }
-        else if (passedargv[0] == BASECOMMANDS.PUBLISH) {
-            showTitleAndBanner();
-        }else{
-        showError(`
-      
-      ${blue(passedargv[0])}: The command '${passedargv[0]}' is not recognized as the name of a  operable command. Check the spelling of the name
-      
-      `);
-      process.exit(1) 
-        }
-        
-    }
-    process.exit(1);
+export async function TEMPLATE(task:Promise<any>): Promise<any> {
+    let latestVersion: string = '';
+
+	const token = new Token();
+
+	if (isatty(1)) {
+		getLatestVersion(pkg.name, token)
+			.then((version:string) => (latestVersion = version))
+			.catch((_: any) => {
+				/* noop */
+			});
+	}
+
+	task.catch(fatal).then(() => {
+		if (latestVersion && semver.gt(latestVersion, pkg.version)) {
+			showInfo(
+				`\nThe latest version of ${pkg.name} is ${latestVersion} and you have ${pkg.version}.\nUpdate it now: npm install -g ${pkg.name}`
+			);
+		} else {
+			token.cancel();
+		}
+	});
+   
+}
+
+function fatal(message: any, ...args: any[]): void {
+	if (message instanceof Error) {
+		message = message.message;
+
+		if (/^cancell?ed$/i.test(message)) {
+			return;
+		}
+	}
+
+     console.error(message, ...args);
+
+	if (/Unauthorized\(401\)/.test(message)) {
+		console.error(`Be sure to use a Personal Access Token which has access to **all accessible accounts**.`);
+	}
+
+	process.exit(1);
 }
