@@ -2,7 +2,7 @@ import fs from 'fs'
 
 import path from 'path'
 import { Objectequals } from '../../platform/checking/types.checking';
-import { IFrameworks, ITpmConfigSettings, Settings } from '../models/tpmSettings.model';
+import { IFrameworks, ITpmConfigSettings, Settings } from '../models/store.model';
 import { compareVersions } from '../utils/version.utils';
 import { LocalPaths } from './path.env'
 

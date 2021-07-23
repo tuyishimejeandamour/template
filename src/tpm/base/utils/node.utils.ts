@@ -1,25 +1,47 @@
-import { spawn } from "child_process";
-var builtins = require('builtins')
+import * as cp from 'child_process';
+import { CancellationToken } from './token.utils';
 
-export function executeNodeScript({ cwd,args }:{cwd:string,args:string[]}, data:any, source:string):Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      const child = spawn(
-        process.execPath,
-        [...args, '-e', source, '--', JSON.stringify(data)],
-        { cwd, stdio: 'inherit' }
-      );
-  
-      child.on('close', code => {
-        if (code !== 0) {
-          reject({
-            command: `node ${args.join(' ')}`,
-          });
-          return;
-        }
-        resolve();
-      });
-    });
-  }
+interface IOptions {
+	cwd?: string;
+	stdio?: any;
+	customFds?: any;
+	env?: any;
+	timeout?: number;
+	maxBuffer?: number;
+	killSignal?: string;
+}
+
+
+
+function exec(
+	command: string,
+	options: IOptions = {},
+	cancellationToken?: CancellationToken
+): Promise<{ stdout: string; stderr: string }> {
+	return new Promise((c, e) => {
+		let disposeCancellationListener: Function;
+
+		const child = cp.exec(command, { ...options, encoding: 'utf8' } as any, (err, stdout: string, stderr: string) => {
+			if (disposeCancellationListener) {
+				disposeCancellationListener();
+				disposeCancellationListener ;
+			}
+
+			if (err) {
+				return e(err);
+			}
+			c({ stdout, stderr });
+		});
+
+		if (cancellationToken) {
+			disposeCancellationListener = cancellationToken.subscribe((err: any) => {
+				child.kill();
+				e(err);
+			});
+		}
+	});
+}
+
 
   export function validateTemplateName(name:string){
     const blackListedName = [

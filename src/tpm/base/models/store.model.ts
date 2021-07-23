@@ -16,6 +16,4 @@ export interface Settings{
     isnewUser: boolean;
     version:string,
     supportedframeworks:IFrameworks[],
-
-
 }
