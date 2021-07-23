@@ -29,10 +29,7 @@ export const readfileExist = (path:string):any | undefined =>{
    }
 }
 
-export const getDirectoryTree = (path:Path =new Path('./'))=>{
-   if (path.path == './') {
-       path.path = process.cwd();
-   }
+export const getDirectoryTree = (path:Path =new Path(process.cwd()))=>{
 
    return dirTree(path.path);
 }

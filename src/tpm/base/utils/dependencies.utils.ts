@@ -2,7 +2,7 @@ import path from "path";
 import { checkNPM, checkYARN, exec } from "./node.utils";
 import * as cp from 'child_process';
 import { exists, existsSync } from "fs-extra";
-import { showInfo } from "../../platform/log/logger.util";
+import { showInfo } from "../../platform/log/logger.platform";
 import _ from "lodash";
 const parseSemver = require('parse-semver');
 

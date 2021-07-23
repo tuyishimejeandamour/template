@@ -4,11 +4,11 @@ import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.quest
 import { getRepository, getUrl, isGitHubRepository } from "../../../../base/utils/node.utils";
 import { Path } from "../../../../base/utils/path";
 import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
-import { showWarn } from "../../../../platform/log/logger.util";
+import { showWarn } from "../../../../platform/log/logger.platform";
 import { BaseProcessor, IFile, IPackageOptions } from "./base.processor";
 
 export class CompositionProcessor extends BaseProcessor {
-	constructor(composition: IPackageTemplate, options: IPackageOptions = {}) {
+	constructor(composition: IPackageTemplate) {
 		super(composition);
 
 		const flags = ['Public'];

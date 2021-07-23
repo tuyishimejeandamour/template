@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { showError } from '../log/logger.util';
+import { showError } from '../log/logger.platform';
 
 
 export const checkExistence = (path: string): boolean => {

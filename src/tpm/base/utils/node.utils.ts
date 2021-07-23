@@ -204,4 +204,7 @@ function parseStdout({ stdout }: { stdout: string }): string {
 export function flatten<T>(arr:T[][]): T[] {
 	return [].concat.apply([], arr as never[][]) as T[];
 }
+export function isGitLabRepository(repository: string): boolean {
+	return /^https:\/\/gitlab\.com\/|^git@gitlab\.com:/.test(repository || '');
+}
 

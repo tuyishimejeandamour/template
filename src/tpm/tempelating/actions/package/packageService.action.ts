@@ -100,7 +100,7 @@ export function collectFiles(
 		files = files.filter(f => !/\r$/m.test(f));
 
 		return (
-			readFile(path.join(cwd, '.tempignore'), 'utf8')
+			readFile(path.join(cwd, '.vscodeignore'), 'utf8')
 				.catch<string>(err =>
 					err.code !== 'ENOENT' ? Promise.reject(err) : Promise.resolve('')
 				)

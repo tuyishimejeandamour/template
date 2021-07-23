@@ -1,4 +1,4 @@
-import {  showInfo } from './tpm/platform/log/logger.util';
+import {  showInfo } from './tpm/platform/log/logger.platform';
 import { Token } from './tpm/base/utils/token.utils';
 import { isatty } from 'tty';
 import * as semver from 'semver';

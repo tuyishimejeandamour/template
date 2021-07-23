@@ -1,6 +1,7 @@
 export const defaultignorefileandfolder = [
     '.tempignore',
 	'package-lock.json',
+	'package.json',
 	'yarn.lock',
 	'npm-shrinkwrap.json',
 	'.editorconfig',
@@ -17,13 +18,17 @@ export const defaultignorefileandfolder = [
 	'CONTRIBUTING.md',
 	'PULL_REQUEST_TEMPLATE.md',
 	'CODE_OF_CONDUCT.md',
+	'.md',
+	'LICENSE',
 	'.github',
 	'.travis.yml',
 	'appveyor.yml',
 	'**/.git/**',
 	'**/.DS_Store',
     '.idea',
-	'.vscode',
+	'**/.vscode/**',
+	'tsconfig.json',
+	'tslint.json',
 
 ]
 
