@@ -31,7 +31,7 @@ import { BaseProcessor, IFile } from "./base.processor";
 		}
 
 		const messages = [
-			`The following files have the same case insensitive path, which isn't supported by the VSIX format:`,
+			`The following files have the same case insensitive path, which isn't supported`,
 		];
 
 		for (const lower of this.duplicates) {

@@ -1,6 +1,7 @@
 import _ from "lodash";
-import { IPackageTemplate } from "../../../../base/models/template.model";
+import { IPackageTemplate, TemplateKind } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
+import { openValidateQuestion } from "../../../../base/questions/open/open.question";
 import { getRepository, getUrl, isGitHubRepository } from "../../../../base/utils/node.utils";
 import { Path } from "../../../../base/utils/path";
 import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
@@ -61,10 +62,16 @@ export class CompositionProcessor extends BaseProcessor {
 
 	async onEnd():Promise<void> {
 		if (typeof this.composition.templateKind === 'string') {
-			showWarn(
-				`The 'templateKind' property should be of type 'string[]'`
-			);
-		}
+
+            if (typeof this.checktemplatekind(this.composition.templateKind) != 'boolean') {
+                const answer = await openValidateQuestion('templateking','input','provide category of template',this.checktemplatekind);
+               this.composition.templateKind = [answer] as TemplateKind[];
+            }
+           
+        }else{
+            const answer = await openValidateQuestion('templateking','input','provide category of template',this.checktemplatekind);
+            this.composition.templateKind = [answer] as TemplateKind[];
+        }
 
 		if (this.composition.publisher === 'templatepublisher') {
 			throw new Error(
@@ -92,5 +99,15 @@ export class CompositionProcessor extends BaseProcessor {
 	
 		return composition;
 	}
+	private checktemplatekind(kind:string){
+        const categories = ['starter' , 'component' , 'page' , 'layout' , 'tool']
+      const n = categories.findIndex(element => element == kind);
+       if(n>-1){
+           return true
+       }else{
+        return `provide valid category:('starter' , 'component' , 'page' , 'layout' , 'tool')`;
+       }
+     
+    }
 }
 

@@ -1,7 +1,6 @@
 import _ from "lodash";
 import { IPackageTemplate } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
-import { getRepository, getUrl, isGitHubRepository } from "../../../../base/utils/node.utils";
 import { Path } from "../../../../base/utils/path";
 import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
 import { showWarn } from "../../../../platform/log/logger.platform";
@@ -35,7 +34,7 @@ export class NodemodulesProcessor extends BaseProcessor {
     async onFile(file: IFile): Promise<IFile> {
         const path = new Path(file.path).normalize();
 
-        if (!/^extension\/package.json$/i.test(path)) {
+        if (!/\/package.json$/i.test(path)) {
             return Promise.resolve(file);
         }
 
@@ -44,19 +43,15 @@ export class NodemodulesProcessor extends BaseProcessor {
     }
 
     async onEnd(): Promise<void> {
-        if (typeof this.composition.templateKind === 'string') {
-            showWarn(
-                `The 'templateKind' property should be of type 'string[]'`
-            );
-        }
+       
 
-        if (this.composition.publisher === 'templatepublisher') {
+        if (this.templateDependencies.length >10 ) {
             throw new Error(
-                "It's not allowed to use the 'templatepublisher' publisher."
+                "It's not allowed to use the more than 10 dependencies in template project."
             );
         }
 
-        if (!this.composition.repository) {
+        if (this.templateDependencies.length >5 || this.templateDevDependencies.length >10) {
             showWarn(`A 'repository' field is missing from the 'package.json' manifest file.`);
 
             if (!/^y$/i.test(await yesornoQuestion('Do you want to continue? [y/N] '))) {
@@ -64,17 +59,8 @@ export class NodemodulesProcessor extends BaseProcessor {
             }
         }
     }
-    static validatecomposition(composition: IPackageTemplate): IPackageTemplate {
-        checkTemplateName(composition.name);
+   
 
-        if (!composition.version) {
-            throw new Error('Manifest missing field: version');
-        }
-
-        validateVersion(composition.version);
-
-
-        return composition;
-    }
+    
 }
 
