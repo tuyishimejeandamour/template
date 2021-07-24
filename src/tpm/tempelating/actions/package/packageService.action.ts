@@ -3,7 +3,7 @@ import path from "path";
 import { IPackageTemplate } from "../../../base/models/template.model";
 import * as fs from 'fs-extra';
 import { cloneDeepWith } from "lodash";
-import { ITranslations } from "./processor/base.processor";
+import { Dependency, ITranslations } from "./processor/base.processor";
 import minimatch from "minimatch";
 import { defaultignorefileandfolder, notIgnored } from "../../../base/models/ignore.model";
 import { getDependencies } from "../../../base/utils/dependencies.utils";
@@ -137,4 +137,15 @@ export function collectFiles(
 				)
 		);
 	});
+}
+
+export const getDevDependencies = ():Promise<Dependency[]>=>{
+
+
+	return Promise.resolve([{name:'angular',version:'^10.8.2'}])
+}
+export const getPeroDependencies = ():Promise<Dependency[]>=>{
+
+
+	return Promise.resolve([{name:'react',version:'^17.0.2'}])
 }

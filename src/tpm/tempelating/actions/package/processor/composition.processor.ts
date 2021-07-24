@@ -89,12 +89,6 @@ export class CompositionProcessor extends BaseProcessor {
 	
 		validateVersion(composition.version);
 	
-		const hasMain = !!composition.main;
-
-       if ( !hasMain) {
-			throw new Error("composition needs the 'main' property");
-		} 
-	
 	
 		return composition;
 	}

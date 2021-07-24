@@ -1,26 +1,45 @@
-import { IPackageTemplate } from "../../../../base/models/template.model";
-import { Path } from "../../../../base/utils/path";
+
 import { BaseProcessor, IFile } from "./base.processor";
 
+/**
+ * this class will process  all files and collect all files
+ * return all required  file of project
+ * 
+ */
 
+ export class StructureProcessor extends BaseProcessor {
+	private files = new Map<string, string[]>();
+	private duplicates = new Set<string>();
 
-export class StructureProcessor extends BaseProcessor{
+	async onFile(file: IFile): Promise<IFile> {
+		const lower = file.path.toLowerCase();
+		const existing = this.files.get(lower);
 
-    constructor(composition:IPackageTemplate){
-      super(composition);
-    }
-
-
-    async onFile(file:IFile):Promise<IFile>{
-        const path = new Path(file.path).normalize();
-
-		if (!/^extension\/package.json$/i.test(path)) {
-			return Promise.resolve(file);
+		if (existing) {
+			this.duplicates.add(lower);
+			existing.push(file.path);
+		} else {
+			this.files.set(lower, [file.path]);
 		}
-        
 
-		// Ensure that package.json is writable as VS Code needs to
-		// store metadata in the extracted file.
-		return { ...file, mode: 0o100644 };
+		return file;
 	}
-    }
+
+	async onEnd() {
+		if (this.duplicates.size === 0) {
+			return;
+		}
+
+		const messages = [
+			`The following files have the same case insensitive path, which isn't supported by the VSIX format:`,
+		];
+
+		for (const lower of this.duplicates) {
+			for (const filePath of this.files.get(lower)as string[]) {
+				messages.push(`  - ${filePath}`);
+			}
+		}
+
+		throw new Error(messages.join('\n'));
+	}
+}

@@ -6,6 +6,11 @@ export interface INonStoredFile {
 	readonly contents: Buffer | string;
 }
 
+export interface Dependency{
+    name:string;
+    version:string;
+}
+
 export interface IStoreFile {
 	path: string;
 	mode?: number;
@@ -50,6 +55,7 @@ export class BaseProcessor implements IProcessor {
     declare private _templatestructure:any;
     declare private _tags:any[];
     declare private _template:any;
+
     constructor(composition:IPackageTemplate) {
         this._compositon = composition;
         this._assets = [];
