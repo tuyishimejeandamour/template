@@ -7,11 +7,7 @@ import _ from "lodash";
 const parseSemver = require('parse-semver');
 
 function getNpmDependencies(cwd: string): Promise<string[]> {
-	return checkNPM()
-		.then(() =>
-			exec('npm list --production --parseable --depth=99999 --loglevel=error', { cwd, maxBuffer: 5000 * 1024 })
-		)
-		.then(({ stdout }) => stdout.split(/[\r\n]/).filter(dir => path.isAbsolute(dir)));
+	return Promise.resolve([process.cwd()])
 }
 
 interface YarnTreeNode {
@@ -142,6 +138,7 @@ async function getYarnDependencies(cwd: string, packagedDependencies?: string[])
 }
 
 export async function detectYarn(cwd: string) {
+	console.log("detectYarn")
 	for (const file of ['yarn.lock', '.yarnrc']) {
 		if (await existsSync(path.join(cwd, file))) {
 			if (await checkYARN()) {
@@ -162,6 +159,8 @@ export async function getDependencies(
 	useYarn?: boolean,
 	packagedDependencies?: string[]
 ): Promise<string[]> {
+	console.log('getting getDependencies');
+
 	return (useYarn !== undefined ? useYarn : await detectYarn(cwd))
 		? await getYarnDependencies(cwd, packagedDependencies)
 		: await getNpmDependencies(cwd);

@@ -65,12 +65,12 @@ export class CompositionProcessor extends BaseProcessor {
 
             if (typeof this.checktemplatekind(this.composition.templateKind) != 'boolean') {
                 const answer = await openValidateQuestion('templateking','input','provide category of template',this.checktemplatekind);
-               this.composition.templateKind = [answer] as TemplateKind[];
+               this.composition.templateKind = [answer.templateking] as TemplateKind[];
             }
            
         }else{
             const answer = await openValidateQuestion('templateking','input','provide category of template',this.checktemplatekind);
-            this.composition.templateKind = [answer] as TemplateKind[];
+            this.composition.templateKind = [answer.templateking] as TemplateKind[];
         }
 
 		if (this.composition.publisher === 'templatepublisher') {

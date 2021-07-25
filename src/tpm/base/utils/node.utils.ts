@@ -1,5 +1,7 @@
 import * as cp from 'child_process';
+import { readcomposition } from '../../tempelating/actions/package/packageService.action';
 import { Token } from './token.utils';
+import semver from 'semver'
 
 interface IOptions {
 	cwd?: string;
@@ -168,7 +170,9 @@ export const isGitHubRepository = (repository: string): boolean=> {
 	return /^https:\/\/github\.com\/|^git@github\.com:/.test(repository || '');
 }
 export function checkNPM(cancellationToken?: Token): Promise<void> {
-	return exec('npm -v', {}, cancellationToken).then(({ stdout }) => {
+	return exec('npm --v').then(({ stdout }) => {
+		console.log("check out npm version")
+		console.log(stdout)
 		const version = stdout.trim();
 
 		if (/^3\.7\.[0123]$/.test(version)) {
@@ -208,3 +212,72 @@ export function isGitLabRepository(repository: string): boolean {
 	return /^https:\/\/gitlab\.com\/|^git@gitlab\.com:/.test(repository || '');
 }
 
+export async function versionBump(
+	cwd: string = process.cwd(),
+	version?: string,
+	commitMessage?: string,
+): Promise<void> {
+	if (!version) {
+		return Promise.resolve();
+	}
+
+	const manifest = await readcomposition(cwd);
+
+	if (manifest.version === version) {
+		return;
+	}
+
+	switch (version) {
+		case 'major':
+		case 'minor':
+		case 'patch':
+			break;
+		case 'premajor':
+		case 'preminor':
+		case 'prepatch':
+		case 'prerelease':
+		case 'from-git':
+			return Promise.reject(`Not supported: ${version}`);
+		default:
+			if (!semver.valid(version)) {
+				return Promise.reject(`Invalid version ${version}`);
+			}
+	}
+
+	let command = `npm version ${version}`;
+
+	if (commitMessage) {
+		command = `${command} -m "${commitMessage}"`;
+	}
+
+	try {
+	
+		const { stdout, stderr } = await exec(command, { cwd });
+
+		if (!process.env['VSCE_TESTS']) {
+			process.stdout.write(stdout);
+			process.stderr.write(stderr);
+		}
+		return ;
+	} catch (err) {
+		throw err.message;
+	}
+}
+
+function chain2<A, B>(a: A, b: B[], fn: (a: A, b: B) => Promise<A>, index = 0): Promise<A> {
+	if (index >= b.length) {
+		return Promise.resolve(a);
+	}
+
+	return fn(a, b[index]).then(a => chain2(a, b, fn, index + 1));
+}
+
+export function chain<T, P>(initial: T, processors: P[], process: (a: T, b: P) => Promise<T>): Promise<T> {
+	return chain2(initial, processors, process);
+}
+
+export async function sequence(promiseFactories: { (): Promise<any> }[]): Promise<void> {
+	for (const factory of promiseFactories) {
+		await factory();
+	}
+}

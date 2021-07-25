@@ -1,10 +1,10 @@
 import { program } from 'commander';
-import { red } from 'kleur';
+import { red, yellow } from 'kleur';
 import leven from 'leven';
 import { TEMPLATE } from './tpm';
 import { TpmEnviroment } from './tpm/base/env/tpm.env';
 
-import { toBePublished } from './tpm/tempelating/actions/package/package.action';
+import { packTemplate, toBePublished } from './tpm/tempelating/actions/package/package.action';
 const pkg = require('../package.json')
 
 export function index() {
@@ -15,7 +15,7 @@ export function index() {
   program
     .command('ls')
     .description('Lists all the files that will be published')
-    .option('--y', 'Use yarn instead of npm (default inferred from presence of yarn.lock or .yarnrc)')
+    .option('-y', 'Use yarn instead of npm (default inferred from presence of yarn.lock or .yarnrc)')
     .option('--n', 'Use npm instead of yarn (default inferred from lack of yarn.lock or .yarnrc)')
     .option<string>(
       '--packagedDependencies <path>',
@@ -26,16 +26,42 @@ export function index() {
     .action(({ yarn, packagedDependencies, ignoreFile }) =>
       TEMPLATE(toBePublished(undefined, yarn, packagedDependencies))
     );
+    program
+		.command('package [<version>]')
+		.description('Packages an template')
+		.option('-o, --out [path]', 'Output packed template file to [path] location (defaults to <name>-<version>.template)')
+		.option('-m, --message <commit message>', 'Commit message used when calling `npm version`.')
+		.option('-y, --yarn', 'Use yarn instead of npm (default yarn if installed)')
+		.option('-n, -npm', 'Use npm instead of yarn (default when yarn doesn\'t exist)')
+		.action(
+			(
+				version,
+				{
+					out,
+					message,
+					yarn
+				}
+			) =>
+				TEMPLATE(
+					packTemplate({
+						packagePath: out,
+						version,
+						commitMessage: message,
+						useYarn: yarn,
+					})
+				)
+		);
+
   program.on('command:*', ([cmd]: string) => {
-    
+
     program.outputHelp(help => {
       const availableCommands = program.commands.map(c => c._name);
       const suggestion = availableCommands.find(c => leven(c, cmd) < c.length * 0.4);
-     console.log(program.commands);
+      console.log(program.commands);
       help = `${help}
 ${red('Unknown command')} '${cmd}'`;
 
-      return suggestion ? `${help}, did you mean '${suggestion}'?\n` : `${help}.\n`;
+      return suggestion ? `${help}, did you mean '${yellow(suggestion)}'?\n` : `${help}.\n`;
     });
     process.exit(1);
   });

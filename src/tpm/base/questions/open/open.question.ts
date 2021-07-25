@@ -14,7 +14,7 @@ export const openQuestion = async (name:string,type:string,message:string): Prom
     ]
     return inquirer.prompt(questions);
 }
-export const openValidateQuestion = async (name:string,type:string,message:string,fn:(value:string)=>any): Promise<string> => {
+export const openValidateQuestion = async (name:string,type:string,message:string,fn:(value:string)=>any): Promise<any> => {
 
     const questions =[ 
         {

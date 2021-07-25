@@ -19,12 +19,12 @@ export class ReadMeProcessor extends BaseProcessor {
 	private repositoryUrl: string;
 	private gitHubIssueLinking: boolean;
 	private gitLabIssueLinking: boolean;
+	private name: string = 'README.md';
+	private regexp: RegExp = /^extension\/readme.md$/i;
+	private assetType: string = "console.assest"
 
 	constructor(
 		composition: IPackageTemplate,
-		private name: string = 'README.md',
-		private regexp: RegExp = /^extension\/readme.md$/i,
-		private assetType: string,
 		options: IPackageOptions = {}
 	) {
 		super(composition);
@@ -216,12 +216,12 @@ export class ReadMeProcessor extends BaseProcessor {
 	}
 
    
-     static isInMemoryFile(file: IFile): file is INonStoredFile {
+     static isCached(file: IFile): file is INonStoredFile {
         return !!(file as INonStoredFile).contents;
     }
     
       static read(file: IFile): Promise<string> {
-        if (this.isInMemoryFile(file)) {
+        if (this.isCached(file)) {
             return Promise.resolve(file.contents).then(b => (typeof b === 'string' ? b : b.toString('utf8')));
         } else {
             return readFile(file.localPath, 'utf8');

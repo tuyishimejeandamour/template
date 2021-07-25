@@ -6,6 +6,16 @@ export interface INonStoredFile {
 	readonly contents: Buffer | string;
 }
 
+export interface IPackage {
+	composition:IPackageTemplate;
+	packagePath: string;
+}
+
+export interface IPackageResult extends IPackage {
+	files: IFile[];
+}
+
+
 export interface Dependency{
     name:string;
     version:string;
