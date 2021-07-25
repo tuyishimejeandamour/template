@@ -29,7 +29,7 @@ export async function listFiles(
 	ignoreFile?: string
 ): Promise<string[]> {
 	await readcomposition(cwd);
-	return await collectFiles(cwd, useYarn, packagedDependencies);
+	return await getTemplateFiles(cwd, useYarn, packagedDependencies);
 }
 export function readcomposition(cwd = process.cwd(), nls = true): Promise<IPackageTemplate> {
 	const manifestPath = path.join(cwd, 'package.json');
@@ -85,7 +85,7 @@ export function mergecompositon(manifest: IPackageTemplate, translations: ITrans
 }
 
 
-export function collectAllFiles(cwd: string, useYarn?: boolean, dependencyEntryPoints?: string[]): Promise<string[]> {
+export function collectAllTemplateFiles(cwd: string, useYarn?: boolean, dependencyEntryPoints?: string[]): Promise<string[]> {
 	return getDependencies(cwd, useYarn, dependencyEntryPoints).then(deps => {
 		const promises: Promise<string[]>[] = deps.map(dep => {
 			return __glob('**', { cwd: dep, nodir: true, dot: true, ignore: 'node_modules/**' }).then((files:any[]) =>{	
@@ -96,12 +96,12 @@ export function collectAllFiles(cwd: string, useYarn?: boolean, dependencyEntryP
 		return Promise.all(promises).then(flatten);
 	});
 }
-export function collectFiles(
+export function getTemplateFiles(
 	cwd: string,
 	useYarn?: boolean,
 	dependencyEntryPoints?: string[],
 ): Promise<string[]> {
-	return collectAllFiles(cwd, useYarn, dependencyEntryPoints).then(files => {
+	return collectAllTemplateFiles(cwd, useYarn, dependencyEntryPoints).then(files => {
 		files = files.filter(f => !/\r$/m.test(f));
 
 		return (
@@ -182,7 +182,7 @@ export async function pack(options: IPackageOptions = {}): Promise<IPackageResul
 
 	const composition = await readcomposition(cwd);
 
-	const files = await collect(composition, options);
+	const files = await gatherFileToCompress(composition, options);
 	const jsFiles = files.filter(f => /\.js$/i.test(f.path));
 
 	if (files.length > 5000 || jsFiles.length > 100) {
@@ -196,12 +196,12 @@ export async function pack(options: IPackageOptions = {}): Promise<IPackageResul
 
 	return { composition, packagePath, files };
 }
-export function collect(composition: IPackageTemplate, options: IPackageOptions = {}): Promise<IFile[]> {
+export function gatherFileToCompress(composition: IPackageTemplate, options: IPackageOptions = {}): Promise<IFile[]> {
 	const cwd = options.cwd || process.cwd();
 	const packagedDependencies = options.dependencyEntryPoints || undefined;
 	const processors = createDefaultProcessors(composition, options);
 
-	return collectFiles(cwd, options.useYarn, packagedDependencies).then(fileNames => {
+	return getTemplateFiles(cwd, options.useYarn, packagedDependencies).then(fileNames => {
 		const files = fileNames.map(f => ({ path: `template/${f}`, localPath: path.join(cwd, f) }));
 
 		return processFiles(processors, files);
@@ -236,7 +236,6 @@ function compressTemplate(files: IFile[], packagePath: string): Promise<void> {
 
 export function processFiles(processors: IProcessor[], files: IFile[]): Promise<IFile[]> {
 	const processedFiles = files.map(file => chain(file, processors, (file, processor) => processor.onFile(file)));
-
 	return Promise.all(processedFiles).then(files => {
 		return sequence(processors.map(p => () => p.onEnd())).then(() => {
 			const assets = _.flatten(processors.map(p => p.assets));
@@ -245,11 +244,11 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 				.compact() // remove falsey values
 				.join(',');
 			const template = processors.reduce((r, p) => ({ ...r, ...p.template }), { assets, tags });
-
+             console.log(template);
 			return Promise.all([totemplateXML(template), toContentTypes(files)]).then(result => {
 				return [
 					{ path: 'templatete.composition', contents: Buffer.from(result[0], 'utf8') },
-					{ path: '[Content_Types].xml', contents: Buffer.from(result[1], 'utf8') },
+					{ path: '[Content_FIle_Types].xml', contents: Buffer.from(result[1], 'utf8') },
 					...files,
 				];
 			});
@@ -266,7 +265,7 @@ export function totemplateXML(template: any): Promise<string> {
 
 const defaultExtensions = {
 	'.json': 'application/json',
-	'.xml': 'text/xml',
+	'.composition': 'text/xml',
 };
 
 export function toContentTypes(files: IFile[]): Promise<string> {

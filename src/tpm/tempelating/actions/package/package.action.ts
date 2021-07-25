@@ -1,5 +1,5 @@
 import denodeify from "denodeify";
-import { collectFiles, pack, readcomposition } from "./packageService.action";
+import { getTemplateFiles, pack, readcomposition } from "./packageService.action";
 import { IPackageOptions } from "./processor/base.processor";
 import * as fs from 'fs-extra'
 import { showSuccess } from "../../../platform/log/logger.platform";
@@ -7,7 +7,7 @@ import { showSuccess } from "../../../platform/log/logger.platform";
 const stat = denodeify(fs.stat);
 export const toBePublished =(cwd = process.cwd(),useYarn?: boolean,packagedDependencies?: string[]):Promise<void>=>{
     return readcomposition(cwd)
-    .then(() => collectFiles(cwd, useYarn, packagedDependencies))
+    .then(() => getTemplateFiles(cwd, useYarn, packagedDependencies))
     .then(files => {/*files.forEach(f => console.log(`${f}`));*/console.log(files)});
 }
 
