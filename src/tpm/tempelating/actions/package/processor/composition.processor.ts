@@ -2,16 +2,17 @@ import _ from "lodash";
 import { IPackageTemplate, TemplateKind } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { openValidateQuestion } from "../../../../base/questions/open/open.question";
+import { detectFramework } from "../../../../base/utils/dependencies.utils";
 import { getRepository, getUrl, isGitHubRepository } from "../../../../base/utils/node.utils";
 import { Path } from "../../../../base/utils/path";
 import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
 import { showWarn } from "../../../../platform/log/logger.platform";
-import { BaseProcessor, IFile, IPackageOptions } from "./base.processor";
+import { BaseProcessor, IFile } from "./base.processor";
 
 export class CompositionProcessor extends BaseProcessor {
 	constructor(composition: IPackageTemplate) {
 		super(composition);
-
+    
 		const flags = ['Public'];
 
 		const repository = getRepository(composition.repository);
@@ -46,12 +47,13 @@ export class CompositionProcessor extends BaseProcessor {
 		if (isGitHub) {
 			this.template.links.github = repository;
 		}
+		console.log(this.template);
 	}
 
 	async onFile(file: IFile): Promise<IFile> {
 		const path = new Path(file.path).normalize();
 
-		if (!/^extension\/package.json$/i.test(path)) {
+		if (!/^package.json$/i.test(path)) {
 			return Promise.resolve(file);
 		}
 
@@ -70,13 +72,20 @@ export class CompositionProcessor extends BaseProcessor {
            
         }else{
             const answer = await openValidateQuestion('templateking','input','provide category of template',this.checktemplatekind);
-            this.composition.templateKind = [answer.templateking] as TemplateKind[];
+            this.template = {
+				...this.template,
+				templateKind : [answer.templateking] as TemplateKind[]
+			}
+			this.composition.templateKind = [answer.templateking] as TemplateKind[];
         }
 
-		if (this.composition.publisher === 'templatepublisher') {
-			throw new Error(
-				"It's not allowed to use the 'templatepublisher' publisher."
-			);
+		if (!this.composition.framework) {
+			const answer = await openValidateQuestion('framework','input','provide framework',this.checktemplatekind);
+            const framework = await detectFramework(answer.framework);
+			this.template = {
+			   ...this.template,
+			   framework:framework
+		   };
 		}
 
 		if (!this.composition.repository) {
@@ -86,6 +95,7 @@ export class CompositionProcessor extends BaseProcessor {
 				throw new Error('Aborted');
 			}
 		}
+		console.log(this.template);
 	}
     static validatecomposition(composition: IPackageTemplate): IPackageTemplate {
 		checkTemplateName(composition.name);

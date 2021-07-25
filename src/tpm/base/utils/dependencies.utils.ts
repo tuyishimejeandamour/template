@@ -4,6 +4,7 @@ import * as cp from 'child_process';
 import { exists, existsSync } from "fs-extra";
 import { showInfo } from "../../platform/log/logger.platform";
 import _ from "lodash";
+import { IFrameworks } from "../models/store.model";
 const parseSemver = require('parse-semver');
 
 function getNpmDependencies(cwd: string): Promise<string[]> {
@@ -164,4 +165,12 @@ export async function getDependencies(
 	return (useYarn !== undefined ? useYarn : await detectYarn(cwd))
 		? await getYarnDependencies(cwd, packagedDependencies)
 		: await getNpmDependencies(cwd);
+}
+
+export async function detectFramework(params:string):Promise<IFrameworks> {
+	return Promise.resolve( {
+		name:"react",
+		version:'^17.0.2'
+	}
+	)
 }

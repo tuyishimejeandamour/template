@@ -2,7 +2,10 @@ import * as cp from 'child_process';
 import { readcomposition } from '../../tempelating/actions/package/packageService.action';
 import { Token } from './token.utils';
 import semver from 'semver'
+import _read from 'read';
+import denodeify from 'denodeify';
 
+const __read = denodeify<_read.Options, string>(_read);
 interface IOptions {
 	cwd?: string;
 	stdio?: any;
@@ -171,10 +174,7 @@ export const isGitHubRepository = (repository: string): boolean=> {
 }
 export function checkNPM(cancellationToken?: Token): Promise<void> {
 	return exec('npm --v').then(({ stdout }) => {
-		console.log("check out npm version")
-		console.log(stdout)
 		const version = stdout.trim();
-
 		if (/^3\.7\.[0123]$/.test(version)) {
 			return Promise.reject(`npm@${version} doesn't work with vsce. Please update npm: npm install -g npm`);
 		}
@@ -280,4 +280,12 @@ export async function sequence(promiseFactories: { (): Promise<any> }[]): Promis
 	for (const factory of promiseFactories) {
 		await factory();
 	}
+}
+
+export function read(prompt: string, options: _read.Options = {}): Promise<string> {
+	if (process.env['VSCE_TESTS'] || !process.stdout.isTTY) {
+		return Promise.resolve('y');
+	}
+
+	return __read({ prompt, ...options });
 }

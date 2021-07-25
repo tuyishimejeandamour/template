@@ -17,3 +17,9 @@ export interface Settings{
     version:string,
     supportedframeworks:IFrameworks[],
 }
+
+export interface Publisher{
+    name:string;
+    token:string;
+}
+
