@@ -20,7 +20,7 @@ export class ReadMeProcessor extends BaseProcessor {
 	private gitHubIssueLinking: boolean;
 	private gitLabIssueLinking: boolean;
 	private name: string = 'README.md';
-	private regexp: RegExp = /^extension\/readme.md$/i;
+	private regexp: RegExp = /^template\/readme.md$/i;
 	private assetType: string = "console.assest"
 
 	constructor(
@@ -36,8 +36,8 @@ export class ReadMeProcessor extends BaseProcessor {
 		this.repositoryUrl = (guess && guess.repository) as string;
 		this.isGitHub = isGitHubRepository(this.repositoryUrl);
 		this.isGitLab = isGitLabRepository(this.repositoryUrl);
-		this.gitHubIssueLinking = typeof options.gitHubIssueLinking === 'boolean' ? options.gitHubIssueLinking : true;
-		this.gitLabIssueLinking = typeof options.gitLabIssueLinking === 'boolean' ? options.gitLabIssueLinking : true;
+		this.gitHubIssueLinking =  true;
+		this.gitLabIssueLinking = true;
 	}
 
 	async onFile(file: IFile): Promise<IFile> {
@@ -68,7 +68,7 @@ export class ReadMeProcessor extends BaseProcessor {
 
 				if (isLinkRelative) {
 					throw new Error(
-						`Couldn't detect the repository where this extension is published. The ${asset} '${link}' will be broken in ${this.name}. GitHub/GitLab repositories will be automatically detected. Otherwise, please provide the repository URL in package.json or use the --baseContentUrl and --baseImagesUrl options.`
+						`Couldn't detect the repository where this extension is published. The ${asset} '${link}' will be broken in ${this.name}. GitHub/GitLab repositories will be automatically detected. Otherwise, please provide the repository URL in package.json`
 					);
 				}
 			}
@@ -154,11 +154,6 @@ export class ReadMeProcessor extends BaseProcessor {
 			if (/^data:$/i.test(srcUrl.protocol as string) && /^image$/i.test(srcUrl.host as string) && /\/svg/i.test(srcUrl.path as string)) {
 				throw new Error(`SVG data URLs are not allowed in ${this.name}: ${src}`);
 			}
-
-			if (!/^https:$/i.test(srcUrl.protocol as string)) {
-				throw new Error(`Images in ${this.name} must come from an HTTPS source: ${src}`);
-			}
-
 		});
 
 		$('svg').each(() => {

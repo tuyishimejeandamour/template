@@ -139,7 +139,6 @@ async function getYarnDependencies(cwd: string, packagedDependencies?: string[])
 }
 
 export async function detectYarn(cwd: string) {
-	console.log("detectYarn")
 	for (const file of ['yarn.lock', '.yarnrc']) {
 		if (await existsSync(path.join(cwd, file))) {
 			if (await checkYARN()) {
@@ -160,8 +159,6 @@ export async function getDependencies(
 	useYarn?: boolean,
 	packagedDependencies?: string[]
 ): Promise<string[]> {
-	console.log('getting getDependencies');
-
 	return (useYarn !== undefined ? useYarn : await detectYarn(cwd))
 		? await getYarnDependencies(cwd, packagedDependencies)
 		: await getNpmDependencies(cwd);

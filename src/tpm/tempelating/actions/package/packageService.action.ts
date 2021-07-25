@@ -34,7 +34,6 @@ export async function listFiles(
 export function readcomposition(cwd = process.cwd(), nls = true): Promise<IPackageTemplate> {
 	const manifestPath = path.join(cwd, 'package.json');
 	const manifestNLSPath = path.join(cwd, 'package.nls.json');
-    console.log('reading package.json file')
 	const manifest = readFile(manifestPath, 'utf8')
 		.catch(() => Promise.reject(`Extension manifest not found: ${manifestPath}`))
 		.then<IPackageTemplate>(manifestStr => {
@@ -193,7 +192,7 @@ export async function pack(options: IPackageOptions = {}): Promise<IPackageResul
 	}
 
 	const packagePath = await getPackagePath(cwd, composition, options);
-	await writeVsix(files, path.resolve(packagePath));
+	await compressTemplate(files, path.resolve(packagePath));
 
 	return { composition, packagePath, files };
 }
@@ -203,13 +202,13 @@ export function collect(composition: IPackageTemplate, options: IPackageOptions 
 	const processors = createDefaultProcessors(composition, options);
 
 	return collectFiles(cwd, options.useYarn, packagedDependencies).then(fileNames => {
-		const files = fileNames.map(f => ({ path: `extension/${f}`, localPath: path.join(cwd, f) }));
+		const files = fileNames.map(f => ({ path: `template/${f}`, localPath: path.join(cwd, f) }));
 
 		return processFiles(processors, files);
 	});
 }
 
-function writeVsix(files: IFile[], packagePath: string): Promise<void> {
+function compressTemplate(files: IFile[], packagePath: string): Promise<void> {
 	return denodeify<string, void>(fs.unlink as any)(packagePath)
 		.catch(err => (err.code !== 'ENOENT' ? Promise.reject(err) : Promise.resolve(null)))
 		.then(
@@ -267,7 +266,7 @@ export function totemplateXML(template: any): Promise<string> {
 
 const defaultExtensions = {
 	'.json': 'application/json',
-	'.vsixmanifest': 'text/xml',
+	'.xml': 'text/xml',
 };
 
 export function toContentTypes(files: IFile[]): Promise<string> {

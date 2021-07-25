@@ -1,5 +1,4 @@
 import denodeify from "denodeify";
-import { versionBump } from "../../../base/utils/node.utils";
 import { collectFiles, pack, readcomposition } from "./packageService.action";
 import { IPackageOptions } from "./processor/base.processor";
 import * as fs from 'fs-extra'
@@ -13,9 +12,7 @@ export const toBePublished =(cwd = process.cwd(),useYarn?: boolean,packagedDepen
 }
 
 export const packTemplate = async (options:IPackageOptions):Promise<any>=>{
-    await versionBump(options.cwd, options.version, options.commitMessage);
-
-	const { packagePath, files } = await pack(options);
+   	const { packagePath, files } = await pack(options);
 	const stats = await stat(packagePath) as fs.Stats;
 
 	let size = 0;

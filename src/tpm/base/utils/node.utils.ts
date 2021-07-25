@@ -212,57 +212,6 @@ export function isGitLabRepository(repository: string): boolean {
 	return /^https:\/\/gitlab\.com\/|^git@gitlab\.com:/.test(repository || '');
 }
 
-export async function versionBump(
-	cwd: string = process.cwd(),
-	version?: string,
-	commitMessage?: string,
-): Promise<void> {
-	if (!version) {
-		return Promise.resolve();
-	}
-
-	const manifest = await readcomposition(cwd);
-
-	if (manifest.version === version) {
-		return;
-	}
-
-	switch (version) {
-		case 'major':
-		case 'minor':
-		case 'patch':
-			break;
-		case 'premajor':
-		case 'preminor':
-		case 'prepatch':
-		case 'prerelease':
-		case 'from-git':
-			return Promise.reject(`Not supported: ${version}`);
-		default:
-			if (!semver.valid(version)) {
-				return Promise.reject(`Invalid version ${version}`);
-			}
-	}
-
-	let command = `npm version ${version}`;
-
-	if (commitMessage) {
-		command = `${command} -m "${commitMessage}"`;
-	}
-
-	try {
-	
-		const { stdout, stderr } = await exec(command, { cwd });
-
-		if (!process.env['VSCE_TESTS']) {
-			process.stdout.write(stdout);
-			process.stderr.write(stderr);
-		}
-		return ;
-	} catch (err) {
-		throw err.message;
-	}
-}
 
 function chain2<A, B>(a: A, b: B[], fn: (a: A, b: B) => Promise<A>, index = 0): Promise<A> {
 	if (index >= b.length) {
@@ -283,7 +232,7 @@ export async function sequence(promiseFactories: { (): Promise<any> }[]): Promis
 }
 
 export function read(prompt: string, options: _read.Options = {}): Promise<string> {
-	if (process.env['VSCE_TESTS'] || !process.stdout.isTTY) {
+	if (!process.stdout.isTTY) {
 		return Promise.resolve('y');
 	}
 

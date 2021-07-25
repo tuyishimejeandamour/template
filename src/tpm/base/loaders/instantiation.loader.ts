@@ -8,9 +8,8 @@ import { IPackageTemplate } from "../models/template.model";
 export function createDefaultProcessors(composition: IPackageTemplate, options: IPackageOptions = {}): IProcessor[] {
 	return [
 		new CompositionProcessor(composition),
-        // new NodemodulesProcessor(composition),
-        // new ReadMeProcessor(composition,options),
-		// new StructureProcessor(composition)
-		
+        new NodemodulesProcessor(composition),
+        new ReadMeProcessor(composition,options),
+		new StructureProcessor(composition)
 	];
 }

@@ -1,7 +1,9 @@
+import { writeJSON, writeJSONSync } from "fs-extra";
 import _ from "lodash";
+import path from "path";
 import { IPackageTemplate, TemplateKind } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
-import { openValidateQuestion } from "../../../../base/questions/open/open.question";
+import { openQuestion, openValidateQuestion } from "../../../../base/questions/open/open.question";
 import { detectFramework } from "../../../../base/utils/dependencies.utils";
 import { getRepository, getUrl, isGitHubRepository } from "../../../../base/utils/node.utils";
 import { Path } from "../../../../base/utils/path";
@@ -34,12 +36,8 @@ export class CompositionProcessor extends BaseProcessor {
 				homepage: composition.homepage,
 			},
 			githubMarkdown: composition.markdown !== 'standard',
-			templateDependencies: _(composition.templateDependencies || [])
-				.uniq()
-				.join(','),
-			templateDevDependencies: _(composition.templateDevDependencies || [])
-				.uniq()
-				.join(','),
+			templateDependencies: composition.templateDependencies || [],
+			templateDevDependencies: composition.templateDevDependencies || [],
 			templateKind: Array.isArray(composition.templateKind)? composition.templateKind.join(','):composition.templateKind,
 			
 		};
@@ -47,7 +45,6 @@ export class CompositionProcessor extends BaseProcessor {
 		if (isGitHub) {
 			this.template.links.github = repository;
 		}
-		console.log(this.template);
 	}
 
 	async onFile(file: IFile): Promise<IFile> {
@@ -80,7 +77,7 @@ export class CompositionProcessor extends BaseProcessor {
         }
 
 		if (!this.composition.framework) {
-			const answer = await openValidateQuestion('framework','input','provide framework',this.checktemplatekind);
+			const answer = await openQuestion('framework','input','provide framework');
             const framework = await detectFramework(answer.framework);
 			this.template = {
 			   ...this.template,
@@ -95,7 +92,8 @@ export class CompositionProcessor extends BaseProcessor {
 				throw new Error('Aborted');
 			}
 		}
-		console.log(this.template);
+
+		writeJSONSync(path.join(process.cwd(),'template.json'),this.template)
 	}
     static validatecomposition(composition: IPackageTemplate): IPackageTemplate {
 		checkTemplateName(composition.name);

@@ -29,16 +29,14 @@ export function index() {
     program
 		.command('package [<version>]')
 		.description('Packages an template')
-		.option('-o, --out [path]', 'Output packed template file to [path] location (defaults to <name>-<version>.template)')
-		.option('-m, --message <commit message>', 'Commit message used when calling `npm version`.')
-		.option('-y, --yarn', 'Use yarn instead of npm (default yarn if installed)')
-		.option('-n, -npm', 'Use npm instead of yarn (default when yarn doesn\'t exist)')
+		.option('--o, --out [path]', 'Output packed template file to [path] location (defaults to <name>-<version>.template)')
+		.option('--y, --yarn', 'Use yarn instead of npm (default yarn if installed)')
+		.option('--n, --npm', 'Use npm instead of yarn (default when yarn doesn\'t exist)')
 		.action(
 			(
 				version,
 				{
 					out,
-					message,
 					yarn
 				}
 			) =>
@@ -46,7 +44,6 @@ export function index() {
 					packTemplate({
 						packagePath: out,
 						version,
-						commitMessage: message,
 						useYarn: yarn,
 					})
 				)

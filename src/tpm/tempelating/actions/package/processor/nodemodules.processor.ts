@@ -1,8 +1,12 @@
+import { writeJSONSync } from "fs-extra";
 import _ from "lodash";
+import { readSync } from "node:fs";
+import path from "path";
 import { IPackageTemplate } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { Path } from "../../../../base/utils/path";
 import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
+import { readfileExist } from "../../../../platform/files/file.platform";
 import { showWarn } from "../../../../platform/log/logger.platform";
 import { getDevDependencies, getPeroDependencies } from "../packageService.action";
 import { BaseProcessor, Dependency, IFile } from "./base.processor";
@@ -16,16 +20,16 @@ import { BaseProcessor, Dependency, IFile } from "./base.processor";
  */
 
 export class NodemodulesProcessor extends BaseProcessor {
-    declare templateDevDependencies: Dependency[];
-    declare templateDependencies: Dependency[];
+    declare templateDevDependency: Dependency[];
+    declare templateDependency: Dependency[];
     constructor(composition: IPackageTemplate) {
         super(composition);
-
+   this.template = readfileExist(path.join(process.cwd(),'template.json'))
          getDevDependencies().then((a) => {
-           this.templateDevDependencies = a;
+           this.templateDevDependency = a;
         });
          getPeroDependencies().then((c) => {
-           this.templateDependencies = c;
+           this.templateDependency = c;
         });
 
 
@@ -37,7 +41,7 @@ export class NodemodulesProcessor extends BaseProcessor {
         if (!/\/package.json$/i.test(path)) {
             return Promise.resolve(file);
         }
-
+        console.log(file.path + "............");
 
         return { ...file, mode: 0o100644 };
     }
@@ -45,19 +49,26 @@ export class NodemodulesProcessor extends BaseProcessor {
     async onEnd(): Promise<void> {
        
 
-        if (this.templateDependencies.length >10 ) {
+        if (this.templateDependency.length >10 ) {
             throw new Error(
                 "It's not allowed to use the more than 10 dependencies in template project."
             );
         }
 
-        if (this.templateDependencies.length >5 || this.templateDevDependencies.length >10) {
+        if (this.templateDependency.length >5 || this.templateDevDependency.length >10) {
             showWarn(`A 'repository' field is missing from the 'package.json' manifest file.`);
 
             if (!/^y$/i.test(await yesornoQuestion('Do you want to continue? [y/N] '))) {
                 throw new Error('Aborted');
             }
         }
+
+        this.template ={
+            ...this.template,
+            templateDependencies:this.templateDependency,
+            templateDevDependencies : this.templateDevDependency
+        }
+        writeJSONSync(path.join(process.cwd(),'template.json'),this.template)
     }
    
 

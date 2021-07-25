@@ -2,7 +2,7 @@ import inquirer from 'inquirer'
 
 
 
-export const openQuestion = async (name:string,type:string,message:string): Promise<string> => {
+export const openQuestion = async (name:string,type:string,message:string): Promise<any> => {
 
     const questions =[ 
         {
