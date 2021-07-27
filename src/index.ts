@@ -3,6 +3,7 @@ import { red, yellow } from 'kleur';
 import leven from 'leven';
 import { TEMPLATE } from './tpm';
 import { TpmEnviroment } from './tpm/base/env/tpm.env';
+import { loginPublisher } from './tpm/platform/store/publisherstoreService';
 
 import { packTemplate, toBePublished } from './tpm/tempelating/actions/package/package.action';
 const pkg = require('../package.json')
@@ -23,7 +24,7 @@ export function index() {
       (val, all) => all ? all.concat(val) : val,
       undefined
     )
-    .action(({ yarn, packagedDependencies, ignoreFile }) =>
+    .action(({ yarn, packagedDependencies}) =>
       TEMPLATE(toBePublished(undefined, yarn, packagedDependencies))
     );
     program
@@ -48,9 +49,19 @@ export function index() {
 					})
 				)
 		);
+    
+    program
+		.command('login <publisher>')
+		.description('login to in order to publish to cloud')
+		.action((name) => TEMPLATE(loginPublisher(name)));
+
+	// program
+	// 	.command('logout <publisher>')
+	// 	.description('Remove a publisher from the known publishers list')
+	// 	.action(name => TEMPLATE(logoutPublisher(name)));
 
   program.on('command:*', ([cmd]: string) => {
-
+    
     program.outputHelp(help => {
       const availableCommands = program.commands.map(c => c._name);
       const suggestion = availableCommands.find(c => leven(c, cmd) < c.length * 0.4);
@@ -66,3 +77,5 @@ ${red('Unknown command')} '${cmd}'`;
 };
 
 index();
+
+

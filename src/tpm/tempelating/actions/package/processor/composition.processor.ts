@@ -86,10 +86,12 @@ export class CompositionProcessor extends BaseProcessor {
 		}
 
 		if (!this.composition.repository) {
-			showWarn(`A 'repository' field is missing from the 'package.json' manifest file.`);
-
-			if (!/^y$/i.test(await yesornoQuestion('Do you want to continue? [y/N] '))) {
-				throw new Error('Aborted');
+			showWarn(`A 'repository' field is missing from the 'package.json'  file.`);
+             const res = await yesornoQuestion('Do you want to provide one? [y/N] ');
+			if (/^y$/i.test(res.yesorno)) {
+				
+				const repo = await openQuestion('repository','input',"insert repository :");
+               this.template.links.repository = getRepository(repo.repository);
 			}
 		}
 
@@ -118,4 +120,5 @@ export class CompositionProcessor extends BaseProcessor {
      
     }
 }
+
 

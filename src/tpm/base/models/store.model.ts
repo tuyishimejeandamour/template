@@ -21,5 +21,6 @@ export interface Settings{
 export interface Publisher{
     name:string;
     token:string;
+    current?:boolean;
 }
 

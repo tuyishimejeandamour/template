@@ -16,6 +16,9 @@ import { createDefaultProcessors } from "../../../base/loaders/instantiation.loa
 import { lookup } from "mime";
 import { ReadMeProcessor } from "./processor/markdown.processor";
 import { LocalPaths } from "../../../base/env/path.env";
+import { writeJSONSync } from "fs-extra";
+import { overwriteFileQuestion } from "../../../base/questions/choice/fileExist.question";
+import { Path } from "../../../base/utils/path";
 const yazl = require('yazl');
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
@@ -105,7 +108,7 @@ export function getTemplateFiles(
 		files = files.filter(f => !/\r$/m.test(f));
 
 		return (
-			readFile(path.join(cwd, '.vscodeignore'), 'utf8')
+			readFile(path.join(cwd, '.templateignore'), 'utf8')
 				.catch<string>(err =>
 					err.code !== 'ENOENT' ? Promise.reject(err) : Promise.resolve('')
 				)
@@ -157,22 +160,39 @@ export const getPeroDependencies = ():Promise<Dependency[]>=>{
 
 export async function getPackagePath(cwd: string, manifest: IPackageTemplate, options: IPackageOptions = {}): Promise<string> {
 	if (!options.packagePath) {
-		return path.join(cwd, getDefaultPackageName(manifest));
+		return ifdirectoryexit(path.join(cwd, getDefaultPackageName(manifest)));
 	}
 
 	try {
 		const _stat = await stat(options.packagePath) as fs.Stats;
 
 		if (_stat.isDirectory()) {
-			return path.join(options.packagePath, getDefaultPackageName(manifest));
+			return ifdirectoryexit(path.join(options.packagePath, getDefaultPackageName(manifest)));
 		} else {
-			return options.packagePath;
+			return ifdirectoryexit(options.packagePath);
 		}
 	} catch {
-		return options.packagePath;
+		return ifdirectoryexit(options.packagePath);
 	}
 }
 
+async function  ifdirectoryexit(ppath:any){
+	const pathc = new Path(ppath);
+	if(fs.existsSync(pathc.path)){
+		const ans =  await overwriteFileQuestion('This package already exists. Do you want to overwrite it?');
+		if (ans.overwrite) {
+			fs.unlinkSync(pathc.path);
+			return ppath;
+		}else{
+			const newname = "new-"+pathc.toarray()[pathc.toarray().length - 1];
+			const arr = pathc.toarray();
+			  arr[pathc.toarray().length - 1] = newname;
+            return path.resolve(arr.join('/'));
+		}
+	}
+
+	return ppath;
+}
 function getDefaultPackageName(composition: IPackageTemplate): string {
 	return `${composition.name}-${composition.version}.template`;
 }
@@ -244,11 +264,11 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 				.compact() // remove falsey values
 				.join(',');
 			const template = processors.reduce((r, p) => ({ ...r, ...p.template }), { assets, tags });
-             console.log(template);
+			writeJSONSync(path.join(process.cwd(),'template.json'),template);
 			return Promise.all([totemplateXML(template), toContentTypes(files)]).then(result => {
 				return [
-					{ path: 'templatete.composition', contents: Buffer.from(result[0], 'utf8') },
-					{ path: '[Content_FIle_Types].xml', contents: Buffer.from(result[1], 'utf8') },
+					{ path: 'templatete.xml', contents: Buffer.from(result[0], 'utf8') },
+					{ path: 'FIle_Types.xml', contents: Buffer.from(result[1], 'utf8') },
 					...files,
 				];
 			});

@@ -41,7 +41,6 @@ export class NodemodulesProcessor extends BaseProcessor {
         if (!/\/package.json$/i.test(path)) {
             return Promise.resolve(file);
         }
-        console.log(file.path + "............");
 
         return { ...file, mode: 0o100644 };
     }

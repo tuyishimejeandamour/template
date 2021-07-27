@@ -2,7 +2,7 @@ import fs from 'fs'
 
 import path from 'path'
 import { Objectequals } from '../../platform/checking/types.checking';
-import { IFrameworks, ITpmConfigSettings, Settings } from '../models/store.model';
+import { IFrameworks, ITpmConfigSettings, Publisher, Settings } from '../models/store.model';
 import { compareVersions } from '../utils/version.utils';
 import { LocalPaths } from './path.env'
 
@@ -27,6 +27,7 @@ export class TpmEnviroment implements ITpmConfigSettings{
     declare static _isnewUser:boolean;
     declare static _settingPath:string;
     private static local_settings:Settings;
+    private static _currentpublisher:Publisher;
      constructor(){
      TpmEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE,LocalPaths.USERROOT,LocalPaths.TPMCONFIG,'tpm.json');
      TpmEnviroment._settingsJson = this.loadLocalSettings();
@@ -34,6 +35,11 @@ export class TpmEnviroment implements ITpmConfigSettings{
      //TpmEnviroment._isUpToDate = compareVersions(TpmEnviroment._settingsJson);
      TpmEnviroment._isnewUser = TpmEnviroment._settingsJson.isnewUser;
     
+    }
+    
+    
+    public get publisher():Publisher {
+        return this.publisher
     }
     
 
