@@ -13,11 +13,11 @@ import { showSuccess } from '../log/logger.platform';
 
 const readFile = denodeify<string, string, string>(fs.readFile);
 const writeFile = denodeify<string, string, object, void>(fs.writeFile as any);
-const storePath = path.join(LocalPaths.HOMEDRIVE,LocalPaths.USERROOT,LocalPaths.TPMCONFIG, '.template');
+const storePath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, '.template');
 
 
 
-function load(): Promise<IStore> {
+export function load(): Promise<IStore> {
 	return readFile(storePath, 'utf8')
 		.catch<string>(err => (err.code !== 'ENOENT' ? Promise.reject(err) : Promise.resolve('{}')))
 		.then<IStore>(rawStore => {
@@ -75,20 +75,20 @@ export async function verifyPat(pat: string, publisherName?: string): Promise<vo
 	console.log(`The Personal Access Token verification succeeded for the publisher '${publisherName}'.`);
 }
 
-async function requestPAT(store: IStore, publisherName: string): Promise<Publisher> {
-	const pat = await read(`Personal Access Token for publisher '${publisherName}':`, { silent: true, replace: '*' });
+async function requestToken(store: IStore, publisherName: string): Promise<Publisher> {
+	const token = await read(`Personal Access Token for publisher '${publisherName}':`, { silent: true, replace: '*' });
 
-	await verifyPat(pat, publisherName);
-
-	return await addPublisherToStore(store, { name: publisherName, token: pat });
+	await verifyPat(token, publisherName);
+	const updatestore = await resetCurrentPublisher();
+	return await addPublisherToStore(updatestore, { name: publisherName, current: true, token: token });
 }
 
 export function getPublisher(publisherName: string): Promise<Publisher> {
-	
-    validateName(publisherName)
+
+	validateName(publisherName)
 	return load().then(store => {
 		const publisher = store.publishers.filter(p => p.name === publisherName)[0];
-		return publisher ? Promise.resolve(publisher) : requestPAT(store, publisherName);
+		return publisher ? Promise.resolve(publisher) : requestToken(store, publisherName);
 	});
 }
 
@@ -101,14 +101,14 @@ export function loginPublisher(publisherName: string): Promise<Publisher> {
 
 			if (publisher) {
 				console.log(`Publisher '${publisherName}' is already known`);
-				return read('Do you want to overwrite its PAT? [y/N] ').then(answer =>
+				return read('Do you want to overwrite its token? [y/N] ').then(answer =>
 					/^y$/i.test(answer) ? store : Promise.reject('Aborted')
 				);
 			}
 
 			return Promise.resolve(store);
 		})
-		.then(store => requestPAT(store, publisherName));
+		.then(store => requestToken(store, publisherName));
 }
 
 export function logoutPublisher(publisherName: string): Promise<any> {
@@ -138,4 +138,18 @@ export function listPublishers(): Promise<void> {
 	return load()
 		.then(store => store.publishers)
 		.then(publishers => publishers.forEach(p => console.log(p.name)));
+}
+
+export  function resetCurrentPublisher(): Promise<IStore> {
+	return load()
+		.then(async store => {
+			store.publishers.forEach(p => {
+				p.current = false
+			});
+			
+			return save(store);
+		});
+	// .then(publishers => publishers.forEach(p => {
+	// 	p.current = false
+	// }));
 }

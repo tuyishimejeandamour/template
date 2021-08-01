@@ -13,3 +13,8 @@ export function createDefaultProcessors(composition: IPackageTemplate, options: 
 		new StructureProcessor(composition)
 	];
 }
+
+export function createDefaultDeProcessors(composition:IPackageTemplate):IProcessor[]{
+
+	return[]
+}

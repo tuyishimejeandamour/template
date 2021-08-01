@@ -8,7 +8,7 @@ const stat = denodeify(fs.stat);
 export const toBePublished =(cwd = process.cwd(),useYarn?: boolean,packagedDependencies?: string[]):Promise<void>=>{
     return readcomposition(cwd)
     .then(() => getTemplateFiles(cwd, useYarn, packagedDependencies))
-    .then(files => {/*files.forEach(f => console.log(`${f}`));*/console.log(files)});
+    .then(files => {files.forEach(f => console.log(`${f}`));});
 }
 
 export const packTemplate = async (options:IPackageOptions):Promise<any>=>{

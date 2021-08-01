@@ -4,6 +4,7 @@ import leven from 'leven';
 import { TEMPLATE } from './tpm';
 import { TpmEnviroment } from './tpm/base/env/tpm.env';
 import { loginPublisher } from './tpm/platform/store/publisherstoreService';
+import { install } from './tpm/tempelating/actions/install/install.action';
 
 import { packTemplate, toBePublished } from './tpm/tempelating/actions/package/package.action';
 const pkg = require('../package.json')
@@ -54,7 +55,11 @@ export function index() {
 		.command('login <publisher>')
 		.description('login to in order to publish to cloud')
 		.action((name) => TEMPLATE(loginPublisher(name)));
-
+    
+    program
+    .command('install <package>')
+    .description('install package')
+    .action((templatePackage)=>TEMPLATE(install(templatePackage)))
 	// program
 	// 	.command('logout <publisher>')
 	// 	.description('Remove a publisher from the known publishers list')
@@ -65,7 +70,6 @@ export function index() {
     program.outputHelp(help => {
       const availableCommands = program.commands.map(c => c._name);
       const suggestion = availableCommands.find(c => leven(c, cmd) < c.length * 0.4);
-      console.log(program.commands);
       help = `${help}
 ${red('Unknown command')} '${cmd}'`;
 
@@ -76,6 +80,10 @@ ${red('Unknown command')} '${cmd}'`;
   program.parse(_args);
 };
 
+
+process.on('beforeExit',()=>{
+  console.log("on exit");
+})
 index();
 
 

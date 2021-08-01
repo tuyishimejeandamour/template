@@ -1,6 +1,7 @@
 import { writeJSON, writeJSONSync } from "fs-extra";
 import _ from "lodash";
 import path from "path";
+import { TpmEnviroment } from "../../../../base/env/tpm.env";
 import { IPackageTemplate, TemplateKind } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { openQuestion, openValidateQuestion } from "../../../../base/questions/open/open.question";
@@ -9,12 +10,13 @@ import { getRepository, getUrl, isGitHubRepository } from "../../../../base/util
 import { Path } from "../../../../base/utils/path";
 import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
 import { showWarn } from "../../../../platform/log/logger.platform";
+import { loginPublisher } from "../../../../platform/store/publisherstoreService";
 import { BaseProcessor, IFile } from "./base.processor";
 
 export class CompositionProcessor extends BaseProcessor {
 	constructor(composition: IPackageTemplate) {
 		super(composition);
-    
+
 		const flags = ['Public'];
 
 		const repository = getRepository(composition.repository);
@@ -25,7 +27,7 @@ export class CompositionProcessor extends BaseProcessor {
 			id: composition.name,
 			displayName: composition.displayName || composition.name,
 			version: composition.version,
-			publisher: composition.publisher,
+			publisher: composition.publisher || TpmEnviroment.publisher,
 			framework: composition.framework,
 			description: composition.description || '',
 			categories: (composition.categories || []).join(','),
@@ -38,8 +40,8 @@ export class CompositionProcessor extends BaseProcessor {
 			githubMarkdown: composition.markdown !== 'standard',
 			templateDependencies: composition.templateDependencies || [],
 			templateDevDependencies: composition.templateDevDependencies || [],
-			templateKind: Array.isArray(composition.templateKind)? composition.templateKind.join(','):composition.templateKind,
-			
+			templateKind: Array.isArray(composition.templateKind) ? composition.templateKind.join(',') : composition.templateKind,
+
 		};
 
 		if (isGitHub) {
@@ -59,66 +61,73 @@ export class CompositionProcessor extends BaseProcessor {
 		return { ...file, mode: 0o100644 };
 	}
 
-	async onEnd():Promise<void> {
+	async onEnd(): Promise<void> {
 		if (typeof this.composition.templateKind === 'string') {
 
-            if (typeof this.checktemplatekind(this.composition.templateKind) != 'boolean') {
-                const answer = await openValidateQuestion('templateking','input','provide category of template',this.checktemplatekind);
-               this.composition.templateKind = [answer.templateking] as TemplateKind[];
-            }
-           
-        }else{
-            const answer = await openValidateQuestion('templateking','input','provide category of template',this.checktemplatekind);
-            this.template = {
+			if (typeof this.checktemplatekind(this.composition.templateKind) != 'boolean') {
+				const answer = await openValidateQuestion('templateking', 'input', 'provide category of template', this.checktemplatekind);
+				this.composition.templateKind = [answer.templateking] as TemplateKind[];
+			}
+
+		} else {
+			const answer = await openValidateQuestion('templateking', 'input', 'provide category of template', this.checktemplatekind);
+			this.template = {
 				...this.template,
-				templateKind : [answer.templateking] as TemplateKind[]
+				templateKind: [answer.templateking] as TemplateKind[]
 			}
 			this.composition.templateKind = [answer.templateking] as TemplateKind[];
-        }
+		}
 
 		if (!this.composition.framework) {
-			const answer = await openQuestion('framework','input','provide framework');
-            const framework = await detectFramework(answer.framework);
+			const answer = await openQuestion('framework', 'input', 'provide framework');
+			const framework = await detectFramework(answer.framework);
 			this.template = {
-			   ...this.template,
-			   framework:framework
-		   };
+				...this.template,
+				framework: framework
+			};
 		}
 
 		if (!this.composition.repository) {
 			showWarn(`A 'repository' field is missing from the 'package.json'  file.`);
-             const res = await yesornoQuestion('Do you want to provide one? [y/N] ');
+			const res = await yesornoQuestion('Do you want to provide one? [y/N] ');
 			if (/^y$/i.test(res.yesorno)) {
-				
-				const repo = await openQuestion('repository','input',"insert repository :");
-               this.template.links.repository = getRepository(repo.repository);
+
+				const repo = await openQuestion('repository', 'input', "insert repository :");
+				this.template.links.repository = getRepository(repo.repository);
 			}
 		}
 
-		writeJSONSync(path.join(process.cwd(),'template.json'),this.template)
+		if (!this.template.publisher) {
+			showWarn(`'publisher' field is missing`);
+			const repo = await openQuestion('publisher', 'input', "publisher name :");
+			this.template.publisher = await loginPublisher(repo.publisher);
+
+		}
+
+		writeJSONSync(path.join(process.cwd(), 'template.json'), this.template)
 	}
-    static validatecomposition(composition: IPackageTemplate): IPackageTemplate {
+	static validatecomposition(composition: IPackageTemplate): IPackageTemplate {
 		checkTemplateName(composition.name);
-	
+
 		if (!composition.version) {
 			throw new Error('Manifest missing field: version');
 		}
-	
+
 		validateVersion(composition.version);
-	
-	
+
+
 		return composition;
 	}
-	private checktemplatekind(kind:string){
-        const categories = ['starter' , 'component' , 'page' , 'layout' , 'tool']
-      const n = categories.findIndex(element => element == kind);
-       if(n>-1){
-           return true
-       }else{
-        return `provide valid category:('starter' , 'component' , 'page' , 'layout' , 'tool')`;
-       }
-     
-    }
+	private checktemplatekind(kind: string) {
+		const categories = ['starter', 'component', 'page', 'layout', 'tool']
+		const n = categories.findIndex(element => element == kind);
+		if (n > -1) {
+			return true
+		} else {
+			return `provide valid category:('starter' , 'component' , 'page' , 'layout' , 'tool')`;
+		}
+
+	}
 }
 
 

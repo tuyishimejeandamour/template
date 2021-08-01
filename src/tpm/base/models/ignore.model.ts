@@ -1,5 +1,5 @@
 export const defaultignorefileandfolder = [
-    '.tempignore',
+    '.templateignore',
 	'package-lock.json',
 	'package.json',
 	'yarn.lock',
