@@ -11,6 +11,15 @@ function getNpmDependencies(cwd: string): Promise<string[]> {
 	return Promise.resolve([process.cwd()])
 }
 
+export function DevDependencies() {
+	const cwd = process.cwd()
+	return checkNPM()
+		.then(() =>
+			exec('npm list --dev --parseable --json --depth=99999 --loglevel=error', { cwd, maxBuffer: 5000 * 1024 })
+		)
+		.then(({ stdout }) => stdout.split(/[\r\n]/).filter(dir => path.isAbsolute(dir)));
+}
+
 interface YarnTreeNode {
 	name: string;
 	children: YarnTreeNode[];

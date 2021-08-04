@@ -57,7 +57,7 @@ export function index() {
 		.action((name) => TEMPLATE(loginPublisher(name)));
     
     program
-    .command('install <package>')
+    .command('drag <package>')
     .description('install package')
     .action((templatePackage)=>TEMPLATE(install(templatePackage)))
 	// program

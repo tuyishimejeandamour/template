@@ -25,6 +25,8 @@ import { Path } from "../../../base/utils/path";
 import { Dependency, IFile, IPackageOptions, IPackageResult, IProcessor, ITranslations } from "../package/processor/base.processor";
 import { CompositionProcessor } from "../package/processor/composition.processor";
 import { ReadMeProcessor } from "../package/processor/markdown.processor";
+import { xml } from "cheerio";
+
 const yazl = require('yazl');
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
@@ -38,37 +40,22 @@ export async function listFiles(
 	await readcomposition(cwd);
 	return await getTemplateFiles(cwd, useYarn);
 }
-export function readcomposition(cwd = process.cwd(), nls = true): Promise<IPackageTemplate> {
-	const manifestPath = path.join(cwd, 'package.json');
-	const manifestNLSPath = path.join(cwd, 'package.nls.json');
+export async function readcomposition(cwd = process.cwd()): Promise<IPackageTemplate> {
+	const manifestPath = path.join(cwd, 'templatete.xml');
 	const manifest = readFile(manifestPath, 'utf8')
 		.catch(() => Promise.reject(`Extension manifest not found: ${manifestPath}`))
-		.then<IPackageTemplate>(manifestStr => {
-			try {
-				return Promise.resolve(JSON.parse(manifestStr));
-			} catch (e) {
-				return Promise.reject(`Error parsing 'package.json' manifest file: not a valid JSON file.`);
-			}
-		})
-		.then(CompositionProcessor.validatecomposition);
-
-	if (!nls) {
-		return manifest;
-	}
-
-	const manifestNLS = readFile(manifestNLSPath, 'utf8')
-		.catch<string>(err => (err.code !== 'ENOENT' ? Promise.reject(err) : Promise.resolve('{}')))
-		.then<ITranslations>(raw => {
-			try {
-				return Promise.resolve(JSON.parse(raw));
-			} catch (e) {
-				return Promise.reject(`Error parsing JSON manifest translations file: ${manifestNLSPath}`);
-			}
-		});
-
-	return Promise.all([manifest, manifestNLS]).then(([manifest, translations]) => {
-		return mergecompositon(manifest, translations);
-	});
+		.then(manifestStr => {
+		  return _.template(manifestStr)
+		}).then(
+			xmlfunction => {console.log(xmlfunction);return xmlfunction}
+		);
+		
+		
+		
+       
+		return  manifest as any;
+	
+	
 }
 
 function patch(translations: ITranslations): any {

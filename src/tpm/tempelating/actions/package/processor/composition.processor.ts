@@ -1,4 +1,4 @@
-import { writeJSON, writeJSONSync } from "fs-extra";
+import { existsSync, readFile, readFileSync, writeJSONSync } from "fs-extra";
 import _ from "lodash";
 import path from "path";
 import { TpmEnviroment } from "../../../../base/env/tpm.env";
@@ -6,7 +6,7 @@ import { IPackageTemplate, TemplateKind } from "../../../../base/models/template
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { openQuestion, openValidateQuestion } from "../../../../base/questions/open/open.question";
 import { detectFramework } from "../../../../base/utils/dependencies.utils";
-import { getRepository, getUrl, isGitHubRepository } from "../../../../base/utils/node.utils";
+import { getRepository, getUrl, isGitHubRepository, read } from "../../../../base/utils/node.utils";
 import { Path } from "../../../../base/utils/path";
 import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
 import { showWarn } from "../../../../platform/log/logger.platform";
@@ -14,6 +14,7 @@ import { loginPublisher } from "../../../../platform/store/publisherstoreService
 import { BaseProcessor, IFile } from "./base.processor";
 
 export class CompositionProcessor extends BaseProcessor {
+	private templateComposition: IPackageTemplate = Object.create(null);
 	constructor(composition: IPackageTemplate) {
 		super(composition);
 
@@ -22,31 +23,49 @@ export class CompositionProcessor extends BaseProcessor {
 		const repository = getRepository(composition.repository);
 		const isGitHub = isGitHubRepository(repository);
 
+		if (existsSync(path.join(process.cwd(), 'template.json'))) {
+			read('template.json exit do you want to continue[Y/N] : ').then(answer => {
+				if (/^y$/i.test(answer)) {
+					this.templateComposition = JSON.parse(readFileSync(path.join(process.cwd(), 'template.json')).toString());
+				} else {
+					this.templateComposition = Object.create(null)
+				}
+			}
+			);
+		}
+
+
 		this.template = {
 			...this.template,
-			id: composition.name,
-			displayName: composition.displayName || composition.name,
+			id: this.templateComposition?.name || composition.name,
+			displayName: this.templateComposition?.displayName || composition.displayName || composition.name,
 			version: composition.version,
-			publisher: composition.publisher || TpmEnviroment.publisher,
-			framework: composition.framework,
-			description: composition.description || '',
-			categories: (composition.categories || []).join(','),
+			publisher: this.templateComposition?.publisher || composition.publisher || TpmEnviroment.publisher,
+			framework: this.templateComposition?.framework || composition.framework,
+			description: this.templateComposition?.description || composition.description || '',
+			categories: (this.templateComposition?.categories || composition.categories || []).join(','),
 			flags: flags.join(' '),
 			links: {
-				repository,
-				bugs: getUrl(composition.bugs),
-				homepage: composition.homepage,
+				repository: (this.templateComposition?.repository || repository),
+				bugs: getUrl((this.templateComposition?.bugs || composition.bugs)),
+				homepage: this.templateComposition?.homepage || composition.homepage,
 			},
 			githubMarkdown: composition.markdown !== 'standard',
-			templateDependencies: composition.templateDependencies || [],
-			templateDevDependencies: composition.templateDevDependencies || [],
-			templateKind: Array.isArray(composition.templateKind) ? composition.templateKind.join(',') : composition.templateKind,
+			templateDependencies: this.templateComposition?.templateDependencies || composition.templateDependencies || [],
+			templateDevDependencies: this.templateComposition?.templateDevDependencies || composition.templateDevDependencies || [],
+			templateKind: Array.isArray((this.templateComposition?.templateKind || composition.templateKind) as TemplateKind[]) ? this.templateComposition?.templateKind : composition.templateKind,
 
 		};
+
+
+
+
+
 
 		if (isGitHub) {
 			this.template.links.github = repository;
 		}
+
 	}
 
 	async onFile(file: IFile): Promise<IFile> {
@@ -98,7 +117,8 @@ export class CompositionProcessor extends BaseProcessor {
 		}
 
 		if (!this.template.publisher) {
-			showWarn(`'publisher' field is missing`);
+			showWarn(`
+			'publisher' field is missing`);
 			const repo = await openQuestion('publisher', 'input', "publisher name :");
 			this.template.publisher = await loginPublisher(repo.publisher);
 

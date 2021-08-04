@@ -47,7 +47,7 @@ export class NodemodulesProcessor extends BaseProcessor {
 
     async onEnd(): Promise<void> {
        
-
+        console.log("hello there");
         if (this.templateDependency.length >10 ) {
             throw new Error(
                 "It's not allowed to use the more than 10 dependencies in template project."

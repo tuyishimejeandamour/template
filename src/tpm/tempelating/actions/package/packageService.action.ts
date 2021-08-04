@@ -6,7 +6,7 @@ import { cloneDeepWith } from "lodash";
 import { Dependency, IFile, IPackageOptions, IPackageResult, IProcessor, ITranslations } from "./processor/base.processor";
 import minimatch from "minimatch";
 import { defaultignorefileandfolder, notIgnored } from "../../../base/models/ignore.model";
-import { getDependencies } from "../../../base/utils/dependencies.utils";
+import { DevDependencies, getDependencies } from "../../../base/utils/dependencies.utils";
 const glob = require('glob');
 import * as _glob from "glob";
 import { CompositionProcessor } from "./processor/composition.processor";
@@ -147,10 +147,11 @@ export function getTemplateFiles(
 	});
 }
 
-export const getDevDependencies = ():Promise<Dependency[]>=>{
+export const  getDevDependencies = async ():Promise<any>=>{
 
+	console.log(await DevDependencies())
 
-	return Promise.resolve([{name:'angular',version:'^10.8.2'}])
+	return  DevDependencies();
 }
 export const getPeroDependencies = ():Promise<Dependency[]>=>{
 
@@ -184,6 +185,7 @@ async function  ifdirectoryexit(ppath:any){
 			fs.unlinkSync(pathc.path);
 			return ppath;
 		}else{
+			console.log("hello 1")
 			const newname = "new-"+pathc.toarray()[pathc.toarray().length - 1];
 			const arr = pathc.toarray();
 			  arr[pathc.toarray().length - 1] = newname;
@@ -204,7 +206,7 @@ export async function pack(options: IPackageOptions = {}): Promise<IPackageResul
 
 	const files = await gatherFileToCompress(composition, options);
 	const jsFiles = files.filter(f => /\.js$/i.test(f.path));
-
+    console.log("hello")
 	if (files.length > 5000 || jsFiles.length > 100) {
 		console.log(
 			`This extension consists of ${files.length} files, out of which ${jsFiles.length} are JavaScript files. For performance reasons, you should bundle your extension: https://aka.ms/vscode-bundle-extension . You should also exclude unnecessary files by adding them to your .vscodeignore: https://aka.ms/vscode-vscodeignore`
