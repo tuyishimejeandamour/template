@@ -1,5 +1,5 @@
 import { blue, cyan, green, red } from "kleur";
-import { validateTemplateName } from "../../base/utils/node.utils";
+import { validateTemplateName } from "../node/node.platform";
 import fs from "fs-extra";
 import path from "path";
 import * as semver from 'semver';

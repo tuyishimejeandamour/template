@@ -82,7 +82,7 @@ ${red('Unknown command')} '${cmd}'`;
 
 
 process.on('beforeExit',()=>{
-  console.log("on exit");
+  console.log("thank you for using template");
 })
 index();
 

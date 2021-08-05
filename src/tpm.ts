@@ -2,7 +2,7 @@ import {  showInfo } from './tpm/platform/log/logger.platform';
 import { Token } from './tpm/base/utils/token.utils';
 import { isatty } from 'tty';
 import * as semver from 'semver';
-import { getLatestVersion } from './tpm/base/utils/node.utils';
+import { getLatestVersion } from './tpm/platform/node/node.platform';
 const pkg = require('../package.json');
 
 

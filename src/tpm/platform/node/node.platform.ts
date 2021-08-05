@@ -1,9 +1,10 @@
 import * as cp from 'child_process';
 import { readcomposition } from '../../tempelating/actions/package/packageService.action';
-import { Token } from './token.utils';
+import { Token } from '../../base/utils/token.utils';
 import semver from 'semver'
 import _read from 'read';
 import denodeify from 'denodeify';
+
 
 const __read = denodeify<_read.Options, string>(_read);
 interface IOptions {
@@ -172,13 +173,14 @@ export function getRepository(url: string | { type?: string; url?: string}| unde
 export const isGitHubRepository = (repository: string): boolean=> {
 	return /^https:\/\/github\.com\/|^git@github\.com:/.test(repository || '');
 }
-export function checkNPM(cancellationToken?: Token): Promise<void> {
-	return exec('npm --v').then(({ stdout }) => {
-		const version = stdout.trim();
+export  async function checkNPM(cancellationToken?: Token): Promise<void> {
+  console.log("hell")
+	 const output =  await exec('npm -v',{},cancellationToken)
+		const version = output.stdout.trim();
 		if (/^3\.7\.[0123]$/.test(version)) {
 			return Promise.reject(`npm@${version} doesn't work with vsce. Please update npm: npm install -g npm`);
 		}
-	});
+	  return Promise.resolve()
 }
 export function checkYARN(cancellationToken?: Token): Promise<boolean> {
   let isInstalled = false;
@@ -225,7 +227,7 @@ export function chain<T, P>(initial: T, processors: P[], process: (a: T, b: P) =
 	return chain2(initial, processors, process);
 }
 
-export async function sequence(promiseFactories: { (): Promise<any> }[]): Promise<void> {
+export async function sequenceExecuteFunction(promiseFactories: { (): Promise<any> }[]): Promise<void> {
 	for (const factory of promiseFactories) {
 		await factory();
 	}

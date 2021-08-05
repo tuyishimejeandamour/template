@@ -6,7 +6,7 @@ import { IStore } from './store';
 import { Publisher } from '../../base/models/store.model';
 import { readcomposition } from '../../tempelating/actions/package/packageService.action';
 import * as _read from 'read';
-import { read } from '../../base/utils/node.utils';
+import { read } from '../node/node.platform';
 import { validateName } from '../checking/credential.checking';
 import { showSuccess } from '../log/logger.platform';
 
@@ -153,3 +153,13 @@ export  function resetCurrentPublisher(): Promise<IStore> {
 	// 	p.current = false
 	// }));
 }
+
+// export function upadtePackagePublished(name:string) {
+
+// 	return load()
+// 	       .then(async st =>{
+// 			  const publisher = st.publishers.filter(pu=>pu.current)
+
+// 		   })
+	
+// }

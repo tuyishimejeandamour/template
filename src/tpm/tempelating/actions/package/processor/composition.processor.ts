@@ -6,10 +6,10 @@ import { IPackageTemplate, TemplateKind } from "../../../../base/models/template
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { openQuestion, openValidateQuestion } from "../../../../base/questions/open/open.question";
 import { detectFramework } from "../../../../base/utils/dependencies.utils";
-import { getRepository, getUrl, isGitHubRepository, read } from "../../../../base/utils/node.utils";
+import { getRepository, getUrl, isGitHubRepository, read } from "../../../../platform/node/node.platform";
 import { Path } from "../../../../base/utils/path";
 import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
-import { showWarn } from "../../../../platform/log/logger.platform";
+import { showInfo, showWarn } from "../../../../platform/log/logger.platform";
 import { loginPublisher } from "../../../../platform/store/publisherstoreService";
 import { BaseProcessor, IFile } from "./base.processor";
 
@@ -24,14 +24,8 @@ export class CompositionProcessor extends BaseProcessor {
 		const isGitHub = isGitHubRepository(repository);
 
 		if (existsSync(path.join(process.cwd(), 'template.json'))) {
-			read('template.json exit do you want to continue[Y/N] : ').then(answer => {
-				if (/^y$/i.test(answer)) {
+			showInfo("template.json exit we will use it");
 					this.templateComposition = JSON.parse(readFileSync(path.join(process.cwd(), 'template.json')).toString());
-				} else {
-					this.templateComposition = Object.create(null)
-				}
-			}
-			);
 		}
 
 
@@ -51,8 +45,8 @@ export class CompositionProcessor extends BaseProcessor {
 				homepage: this.templateComposition?.homepage || composition.homepage,
 			},
 			githubMarkdown: composition.markdown !== 'standard',
-			templateDependencies: this.templateComposition?.templateDependencies || composition.templateDependencies || [],
-			templateDevDependencies: this.templateComposition?.templateDevDependencies || composition.templateDevDependencies || [],
+			dependencies: composition.dependencies,
+			devDependencies:composition.devDependencies,
 			templateKind: Array.isArray((this.templateComposition?.templateKind || composition.templateKind) as TemplateKind[]) ? this.templateComposition?.templateKind : composition.templateKind,
 
 		};
@@ -81,14 +75,15 @@ export class CompositionProcessor extends BaseProcessor {
 	}
 
 	async onEnd(): Promise<void> {
-		if (typeof this.composition.templateKind === 'string') {
 
-			if (typeof this.checktemplatekind(this.composition.templateKind) != 'boolean') {
+		if (typeof this.template.templateKind === 'string') {
+
+			if (typeof this.checktemplatekind(this.template.templateKind) != 'boolean') {
 				const answer = await openValidateQuestion('templateking', 'input', 'provide category of template', this.checktemplatekind);
-				this.composition.templateKind = [answer.templateking] as TemplateKind[];
+				this.template.templateKind = [answer.templateking] as TemplateKind[];
 			}
 
-		} else {
+		} else if(!this.template.templateKind) {
 			const answer = await openValidateQuestion('templateking', 'input', 'provide category of template', this.checktemplatekind);
 			this.template = {
 				...this.template,
@@ -97,7 +92,7 @@ export class CompositionProcessor extends BaseProcessor {
 			this.composition.templateKind = [answer.templateking] as TemplateKind[];
 		}
 
-		if (!this.composition.framework) {
+		if (!this.template.framework) {
 			const answer = await openQuestion('framework', 'input', 'provide framework');
 			const framework = await detectFramework(answer.framework);
 			this.template = {
@@ -106,7 +101,7 @@ export class CompositionProcessor extends BaseProcessor {
 			};
 		}
 
-		if (!this.composition.repository) {
+		if (!this.template.repository) {
 			showWarn(`A 'repository' field is missing from the 'package.json'  file.`);
 			const res = await yesornoQuestion('Do you want to provide one? [y/N] ');
 			if (/^y$/i.test(res.yesorno)) {

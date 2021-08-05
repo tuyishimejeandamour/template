@@ -10,7 +10,7 @@ import { DevDependencies, getDependencies } from "../../../base/utils/dependenci
 const glob = require('glob');
 import * as _glob from "glob";
 import { CompositionProcessor } from "./processor/composition.processor";
-import { chain, flatten, sequence } from "../../../base/utils/node.utils";
+import { chain, flatten, sequenceExecuteFunction } from "../../../platform/node/node.platform";
 import _ from "lodash";
 import { createDefaultProcessors } from "../../../base/loaders/instantiation.loader";
 import { lookup } from "mime";
@@ -148,9 +148,6 @@ export function getTemplateFiles(
 }
 
 export const  getDevDependencies = async ():Promise<any>=>{
-
-	console.log(await DevDependencies())
-
 	return  DevDependencies();
 }
 export const getPeroDependencies = ():Promise<Dependency[]>=>{
@@ -182,10 +179,8 @@ async function  ifdirectoryexit(ppath:any){
 	if(fs.existsSync(pathc.path)){
 		const ans =  await overwriteFileQuestion('This package already exists. Do you want to overwrite it?');
 		if (ans.overwrite) {
-			fs.unlinkSync(pathc.path);
 			return ppath;
 		}else{
-			console.log("hello 1")
 			const newname = "new-"+pathc.toarray()[pathc.toarray().length - 1];
 			const arr = pathc.toarray();
 			  arr[pathc.toarray().length - 1] = newname;
@@ -259,7 +254,7 @@ function compressTemplate(files: IFile[], packagePath: string): Promise<void> {
 export function processFiles(processors: IProcessor[], files: IFile[]): Promise<IFile[]> {
 	const processedFiles = files.map(file => chain(file, processors, (file, processor) => processor.onFile(file)));
 	return Promise.all(processedFiles).then(files => {
-		return sequence(processors.map(p => () => p.onEnd())).then(() => {
+		return sequenceExecuteFunction(processors.map(p => () => p.onEnd())).then(() => {
 			const assets = _.flatten(processors.map(p => p.assets));
 			const tags = _(_.flatten(processors.map(p => p.tags)))
 				.uniq() // deduplicate
@@ -269,7 +264,7 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 			writeJSONSync(path.join(process.cwd(),'template.json'),template);
 			return Promise.all([totemplateXML(template), toContentTypes(files)]).then(result => {
 				return [
-					{ path: 'templatete.xml', contents: Buffer.from(result[0], 'utf8') },
+					{ path: 'template.xml', contents: Buffer.from(result[0], 'utf8') },
 					{ path: 'FIle_Types.xml', contents: Buffer.from(result[1], 'utf8') },
 					...files,
 				];

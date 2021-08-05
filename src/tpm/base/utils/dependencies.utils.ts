@@ -1,5 +1,5 @@
 import path from "path";
-import { checkNPM, checkYARN, exec } from "./node.utils";
+import { checkNPM, checkYARN, exec } from "../../platform/node/node.platform";
 import * as cp from 'child_process';
 import { exists, existsSync } from "fs-extra";
 import { showInfo } from "../../platform/log/logger.platform";
@@ -11,13 +11,14 @@ function getNpmDependencies(cwd: string): Promise<string[]> {
 	return Promise.resolve([process.cwd()])
 }
 
-export function DevDependencies() {
+export async function DevDependencies() {
+	
 	const cwd = process.cwd()
-	return checkNPM()
-		.then(() =>
-			exec('npm list --dev --parseable --json --depth=99999 --loglevel=error', { cwd, maxBuffer: 5000 * 1024 })
-		)
-		.then(({ stdout }) => stdout.split(/[\r\n]/).filter(dir => path.isAbsolute(dir)));
+	///console.log('in function'+ cwd)
+	//await  checkNPM()
+	const output = await exec('npm list --dev   --loglevel=error', { cwd, maxBuffer: 5000 * 1024 })
+	 return Promise.resolve(output.stdout.split(/[\r\n]/).filter(dir => dir))
+		//.then(({ stdout }) => {console.log("tttt"+stdout); return });
 }
 
 interface YarnTreeNode {

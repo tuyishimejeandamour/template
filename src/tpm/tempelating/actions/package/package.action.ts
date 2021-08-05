@@ -25,6 +25,6 @@ export const packTemplate = async (options:IPackageOptions):Promise<any>=>{
 		size = Math.round(stats.size / 10.24) / 100;
 		unit = 'KB';
 	}
-
+    
 	showSuccess(`Packaged: ${packagePath} (${files.length} files, ${size}${unit})`);
 }
