@@ -1,16 +1,16 @@
 import { red, green, cyan, yellow, blue } from 'kleur';
 import * as figlet from 'figlet';
 import { ConsoleMessage } from '../../base/models/message.model';
-import { TpmEnviroment } from '../../base/env/template.env';
+import { TemplateEnviroment } from '../../base/env/template.env';
 
 
 const newLine = '\n';
 
 export const showTitleAndBanner = (val:boolean = false): void => {
     if (!val) {
-    if(TpmEnviroment._isnewUser){
-        TpmEnviroment._settingsJson.isnewUser = false;
-        TpmEnviroment.updatesettings()
+    if(TemplateEnviroment._isnewUser){
+        TemplateEnviroment._settingsJson.isnewUser = false;
+        TemplateEnviroment.updatesettings()
     }else{
         return;
     }

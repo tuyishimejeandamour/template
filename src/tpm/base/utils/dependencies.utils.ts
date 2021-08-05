@@ -1,10 +1,11 @@
 import path from "path";
-import { checkNPM, checkYARN, exec } from "../../platform/node/node.platform";
+import { exec } from "../../platform/node/node.platform";
 import * as cp from 'child_process';
 import { exists, existsSync } from "fs-extra";
 import { showInfo } from "../../platform/log/logger.platform";
 import _ from "lodash";
 import { IFrameworks } from "../models/store.model";
+import { checkYARN } from "../../platform/node/package.platform";
 const parseSemver = require('parse-semver');
 
 function getNpmDependencies(cwd: string): Promise<string[]> {

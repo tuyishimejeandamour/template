@@ -1,7 +1,7 @@
 import { existsSync, readFile, readFileSync, writeJSONSync } from "fs-extra";
 import _ from "lodash";
 import path from "path";
-import { TpmEnviroment } from "../../../../base/env/template.env";
+import { TemplateEnviroment } from "../../../../base/env/template.env";
 import { IPackageTemplate, TemplateKind } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { openQuestion, openValidateQuestion } from "../../../../base/questions/open/open.question";
@@ -34,7 +34,7 @@ export class CompositionProcessor extends BaseProcessor {
 			id: this.templateComposition?.name || composition.name,
 			displayName: this.templateComposition?.displayName || composition.displayName || composition.name,
 			version: composition.version,
-			publisher: this.templateComposition?.publisher || composition.publisher || TpmEnviroment.publisher,
+			publisher: this.templateComposition?.publisher || composition.publisher || TemplateEnviroment.publisher,
 			framework: this.templateComposition?.framework || composition.framework,
 			description: this.templateComposition?.description || composition.description || '',
 			categories: (this.templateComposition?.categories || composition.categories || []).join(','),

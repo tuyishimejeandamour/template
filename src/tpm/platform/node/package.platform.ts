@@ -1,13 +1,16 @@
+import inquirer from "inquirer";
 import { Token } from "../../base/utils/token.utils";
 import { exec } from "./node.platform";
 
-export  async function checkNPM(cancellationToken?: Token): Promise<void> {
+
+export  async function checkNPM(cancellationToken?: Token): Promise<boolean> {
+     let isInstalled = false;
     const output =  await exec('npm -v',{},cancellationToken)
        const version = output.stdout.trim();
-       if (/^3\.7\.[0123]$/.test(version)) {
-           return Promise.reject(`npm@${version} doesn't work with vsce. Please update npm: npm install -g npm`);
-       }
-     return Promise.resolve()
+       if (version) {
+         isInstalled = true
+    }
+     return Promise.resolve(isInstalled)
 }
 export function checkYARN(cancellationToken?: Token): Promise<boolean> {
  let isInstalled = false;
@@ -24,3 +27,18 @@ export function checkYARN(cancellationToken?: Token): Promise<boolean> {
 
 return Promise.resolve(isInstalled);
 }
+export function checkBOWER(cancellationToken?: Token): Promise<boolean> {
+ let isInstalled = false;
+   exec('bower -v', {}, cancellationToken).then(({ stdout }) => {
+       const version = stdout.trim();
+       if (version) {
+           isInstalled = true;
+       }
+   }).catch(_=>{
+
+ }
+ );
+
+return Promise.resolve(isInstalled);
+}
+

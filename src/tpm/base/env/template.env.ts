@@ -21,7 +21,7 @@ export enum TPMGLOBALS {
 /**
  * we need to intantiate this local variable in order to access all it data
  */
-export class TpmEnviroment implements ITpmConfigSettings {
+export class TemplateEnviroment implements ITpmConfigSettings {
     declare static _settingsJson: Settings;
     declare static _isUpToDate: boolean;
     declare static _isnewUser: boolean;
@@ -30,24 +30,24 @@ export class TpmEnviroment implements ITpmConfigSettings {
     private static local_settings: Settings;
     private static _currentpublisher: Publisher;
     constructor() {
-        TpmEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, 'tpm.json');
-        TpmEnviroment._settingsJson = this.loadLocalSettings();
-        TpmEnviroment.local_settings = this.loadLocalSettings();
+        TemplateEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, 'tpm.json');
+        TemplateEnviroment._settingsJson = this.loadLocalSettings();
+        TemplateEnviroment.local_settings = this.loadLocalSettings();
         this.getcurrentpublisher();
         //TpmEnviroment._isUpToDate = compareVersions(TpmEnviroment._settingsJson);
-        TpmEnviroment._isnewUser = TpmEnviroment._settingsJson.isnewUser;
+        TemplateEnviroment._isnewUser = TemplateEnviroment._settingsJson.isnewUser;
 
 
     }
    
     
     public set packageUse(v : string) {
-        TpmEnviroment.packageuse = v;
+        TemplateEnviroment.packageuse = v;
     }
     
     
     public get packageUse() : string {
-        return  TpmEnviroment.packageuse
+        return  TemplateEnviroment.packageuse
     }
     
 
@@ -57,28 +57,28 @@ export class TpmEnviroment implements ITpmConfigSettings {
 
 
     getversion(): string {
-        return TpmEnviroment._settingsJson.version
+        return TemplateEnviroment._settingsJson.version
     };
     getsupportedframework(): IFrameworks[] {
-        return TpmEnviroment._settingsJson.supportedframeworks
+        return TemplateEnviroment._settingsJson.supportedframeworks
     };
     async getcurrentpublisher() {
-        TpmEnviroment._currentpublisher = await load().then<Publisher>(store => {
+        TemplateEnviroment._currentpublisher = await load().then<Publisher>(store => {
             const publisher = store.publishers.filter(p => p.current)[0];
             return publisher ? Promise.resolve(publisher) : Promise.resolve(Object.create(null));
         })
     }
 
     loadLocalSettings(): Settings {
-        return JSON.parse(fs.readFileSync(TpmEnviroment._settingPath).toString())
+        return JSON.parse(fs.readFileSync(TemplateEnviroment._settingPath).toString())
     }
 
     static updatesettings(): void {
-        if (Objectequals(TpmEnviroment._settingsJson, TpmEnviroment.local_settings)) {
+        if (Objectequals(TemplateEnviroment._settingsJson, TemplateEnviroment.local_settings)) {
             return;
         } else {
-            const content = JSON.stringify(TpmEnviroment._settingsJson, null, 2);
-            fs.writeFileSync(TpmEnviroment._settingPath, content)
+            const content = JSON.stringify(TemplateEnviroment._settingsJson, null, 2);
+            fs.writeFileSync(TemplateEnviroment._settingPath, content)
         }
     }
 
