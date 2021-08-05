@@ -1,9 +1,8 @@
 import * as cp from 'child_process';
-import { readcomposition } from '../../tempelating/actions/package/packageService.action';
 import { Token } from '../../base/utils/token.utils';
-import semver from 'semver'
 import _read from 'read';
 import denodeify from 'denodeify';
+import { checkNPM } from './package.platform';
 
 
 const __read = denodeify<_read.Options, string>(_read);
@@ -173,30 +172,8 @@ export function getRepository(url: string | { type?: string; url?: string}| unde
 export const isGitHubRepository = (repository: string): boolean=> {
 	return /^https:\/\/github\.com\/|^git@github\.com:/.test(repository || '');
 }
-export  async function checkNPM(cancellationToken?: Token): Promise<void> {
-  console.log("hell")
-	 const output =  await exec('npm -v',{},cancellationToken)
-		const version = output.stdout.trim();
-		if (/^3\.7\.[0123]$/.test(version)) {
-			return Promise.reject(`npm@${version} doesn't work with vsce. Please update npm: npm install -g npm`);
-		}
-	  return Promise.resolve()
-}
-export function checkYARN(cancellationToken?: Token): Promise<boolean> {
-  let isInstalled = false;
-	exec('yarn -v', {}, cancellationToken).then(({ stdout }) => {
-		const version = stdout.trim();
 
-		if (version) {
-			isInstalled = true;
-		}
-	}).catch(_=>{
 
-  }
-  );
-
-return Promise.resolve(isInstalled);
-}
 export function getLatestVersion(name: string, cancellationToken?: Token): Promise<string> {
 	return checkNPM(cancellationToken)
 		.then(() => exec(`npm show ${name} version`, {}, cancellationToken))

@@ -1,7 +1,7 @@
 import { red, green, cyan, yellow, blue } from 'kleur';
 import * as figlet from 'figlet';
 import { ConsoleMessage } from '../../base/models/message.model';
-import { TpmEnviroment } from '../../base/env/tpm.env';
+import { TpmEnviroment } from '../../base/env/template.env';
 
 
 const newLine = '\n';

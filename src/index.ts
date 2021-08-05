@@ -2,7 +2,7 @@ import { program } from 'commander';
 import { red, yellow } from 'kleur';
 import leven from 'leven';
 import { TEMPLATE } from './tpm';
-import { TpmEnviroment } from './tpm/base/env/tpm.env';
+import { TpmEnviroment } from './tpm/base/env/template.env';
 import { loginPublisher } from './tpm/platform/store/publisherstoreService';
 import { install } from './tpm/tempelating/actions/install/install.action';
 
@@ -12,6 +12,8 @@ const pkg = require('../package.json')
 export function index() {
   const _args = process.argv;
   new TpmEnviroment();
+
+  
   program.version(pkg.version).usage('<command> [options]');
 
   program

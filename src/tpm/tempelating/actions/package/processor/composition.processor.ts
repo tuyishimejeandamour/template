@@ -1,7 +1,7 @@
 import { existsSync, readFile, readFileSync, writeJSONSync } from "fs-extra";
 import _ from "lodash";
 import path from "path";
-import { TpmEnviroment } from "../../../../base/env/tpm.env";
+import { TpmEnviroment } from "../../../../base/env/template.env";
 import { IPackageTemplate, TemplateKind } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { openQuestion, openValidateQuestion } from "../../../../base/questions/open/open.question";

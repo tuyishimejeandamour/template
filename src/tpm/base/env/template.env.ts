@@ -4,14 +4,13 @@ import path from 'path'
 import { Objectequals } from '../../platform/checking/types.checking';
 import { load } from '../../platform/store/publisherstoreService';
 import { IFrameworks, ITpmConfigSettings, Publisher, Settings } from '../models/store.model';
-import { compareVersions } from '../utils/version.utils';
 import { LocalPaths } from './path.env'
 
 export enum TPMGLOBALS {
     COMMAND = 'template',
-    DOCURI = "https://tpm.com/documentation/getting-started/",
+    DOCURI = "https://template.com/documentation/getting-started/",
     SITE = "https://tpm.com",
-    NPM = "https://registry.npmjs.org/-/package/tpm/dist-tags",
+    NPM = "https://registry.npmjs.org/-/package/template/dist-tags",
 }
 
 /**
@@ -26,6 +25,7 @@ export class TpmEnviroment implements ITpmConfigSettings {
     declare static _settingsJson: Settings;
     declare static _isUpToDate: boolean;
     declare static _isnewUser: boolean;
+    declare static packageuse:string;
     declare static _settingPath: string;
     private static local_settings: Settings;
     private static _currentpublisher: Publisher;
@@ -39,7 +39,17 @@ export class TpmEnviroment implements ITpmConfigSettings {
 
 
     }
-
+   
+    
+    public set packageUse(v : string) {
+        TpmEnviroment.packageuse = v;
+    }
+    
+    
+    public get packageUse() : string {
+        return  TpmEnviroment.packageuse
+    }
+    
 
     public static get publisher(): Publisher {
         return this._currentpublisher
