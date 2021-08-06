@@ -13,7 +13,7 @@ export function index() {
   const _args = process.argv;
   new TemplateEnviroment();
 
-
+  console.log("env 34")
   program.version(pkg.version).usage('<command> [options]');
 
   program

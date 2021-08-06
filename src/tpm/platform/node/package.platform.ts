@@ -1,4 +1,4 @@
-import inquirer from "inquirer";
+
 import { Token } from "../../base/utils/token.utils";
 import { exec } from "./node.platform";
 
@@ -10,6 +10,7 @@ export  async function checkNPM(cancellationToken?: Token): Promise<boolean> {
        if (version) {
          isInstalled = true
     }
+
      return Promise.resolve(isInstalled)
 }
 export function checkYARN(cancellationToken?: Token): Promise<boolean> {

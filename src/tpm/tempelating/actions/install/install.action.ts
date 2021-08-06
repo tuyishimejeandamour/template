@@ -9,9 +9,8 @@ import { Install } from "./installservice.action";
 
 
 export const install = async (templatePackage:string):Promise<any>=>{
-    const token = new Token();
    const tempPath:string = await downloadPackage(templatePackage);
-    TemplateEnviroment.packageuse = await choosePackage(token)
+    TemplateEnviroment.packageuse = await choosePackage()
     const name = await Install(tempPath)
     showSuccess(`successed to install ${name.length} from package `)
 }

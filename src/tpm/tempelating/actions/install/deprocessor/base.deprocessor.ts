@@ -7,9 +7,12 @@ export interface IDeProcessor{
     process:()=>Promise<void>
 }
 
+
 export interface InstallFile{
+    category?:string,
     from:string,
-    to:string
+    to:string,
+    readonly contents?:Buffer | string
 }
 
 export interface Creator {

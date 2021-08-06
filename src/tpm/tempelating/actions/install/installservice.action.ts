@@ -85,7 +85,7 @@ export function gatherFileToInstall(composition: IPackageTemplate,temppath:strin
 	const cwd =  temppath;
 	
 	const processors = createDefaultDeProcessors(composition,cwd);
-
+   console.log("hell")
 	return getTemplateFiles(cwd).then(fileNames => {
 		const files = fileNames.map(f => ({ from:path.join(cwd,f), to: path.join(process.cwd(), f) }));
 		return processTemplate(processors, files);
@@ -93,14 +93,13 @@ export function gatherFileToInstall(composition: IPackageTemplate,temppath:strin
 }
 
 export async function processTemplate(processors: IDeProcessor[], files: InstallFile[]): Promise<InstallFile[]> {
+	console.log('hello')
 	const processedFiles = files.map(file => chain(file, processors, (file, processor) => processor.onInit(file)));
+	console.log("hi")
 	return Promise.all(processedFiles).then(files => {
 		return sequenceExecuteFunction(processors.map(p => () => p.process())).then(() => {
-			return Promise.all([]).then(() => {
-				return [
-					...files
-				];
-			});
+			console.log(files)
+			return files
 		});
 	});
 }

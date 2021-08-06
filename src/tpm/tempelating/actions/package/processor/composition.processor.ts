@@ -47,7 +47,7 @@ export class CompositionProcessor extends BaseProcessor {
 			githubMarkdown: composition.markdown !== 'standard',
 			dependencies: composition.dependencies,
 			devDependencies:composition.devDependencies,
-			templateKind: Array.isArray((this.templateComposition?.templateKind || composition.templateKind) as TemplateKind[]) ? this.templateComposition?.templateKind : composition.templateKind,
+			templateKind: _.isString((this.templateComposition?.templateKind || composition.templateKind) as TemplateKind) ? this.templateComposition?.templateKind : composition.templateKind,
 
 		};
 
@@ -89,7 +89,7 @@ export class CompositionProcessor extends BaseProcessor {
 				...this.template,
 				templateKind: [answer.templateking] as TemplateKind[]
 			}
-			this.composition.templateKind = [answer.templateking] as TemplateKind[];
+			this.composition.templateKind = answer.templateking as TemplateKind;
 		}
 
 		if (!this.template.framework) {

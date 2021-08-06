@@ -16,7 +16,7 @@ export interface IPackageTemplate {
 	publisher: string;
 	templateDependencies: string[];
     templateDevDependencies:string[];
-	templateKind?:  TemplateKind[];
+	templateKind:  TemplateKind;
 
 	// optional (npm)
 	author?: string | TemplateUser;
