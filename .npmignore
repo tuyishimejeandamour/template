@@ -20,3 +20,4 @@ lib/**/**.d.ts
 *.gif
 *.md
 test/
+test.js
