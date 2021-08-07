@@ -8,11 +8,11 @@ import * as fs from 'fs-extra';
 import minimatch from "minimatch";
 const glob = require('glob');
 import * as _glob from "glob";
-import { chain, flatten, sequenceExecuteFunction } from "../../../platform/node/node.platform";
 import _ from "lodash";
 import { createDefaultDeProcessors } from "../../../base/loaders/instantiation.loader";
 import { IDeProcessor, InstallFile } from "./deprocessor/base.deprocessor";
 import { LocalPaths } from "../../../base/env/path.env";
+import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/function.utils";
 
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
