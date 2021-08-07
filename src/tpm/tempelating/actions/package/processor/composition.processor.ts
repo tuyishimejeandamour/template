@@ -23,9 +23,9 @@ export class CompositionProcessor extends BaseProcessor {
 		const repository = getRepository(composition.repository);
 		const isGitHub = isGitHubRepository(repository);
 
-		if (existsSync(path.join(process.cwd(), 'template.json'))) {
+		if (existsSync(path.join(LocalPaths.CWD, 'template.json'))) {
 			showInfo("template.json exit we will use it");
-					this.templateComposition = JSON.parse(readFileSync(path.join(process.cwd(), 'template.json')).toString());
+					this.templateComposition = JSON.parse(readFileSync(path.join(LocalPaths.CWD, 'template.json')).toString());
 		}
 
 
@@ -119,7 +119,7 @@ export class CompositionProcessor extends BaseProcessor {
 
 		}
 
-		writeJSONSync(path.join(process.cwd(), 'template.json'), this.template)
+		writeJSONSync(path.join(LocalPaths.CWD, 'template.json'), this.template)
 	}
 	static validatecomposition(composition: IPackageTemplate): IPackageTemplate {
 		checkTemplateName(composition.name);

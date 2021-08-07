@@ -1,5 +1,7 @@
 import fs from 'fs-extra'
 import path from 'path'
+import { LocalPaths } from '../../base/env/path.env';
+import { TemplateEnviroment } from '../../base/env/template.env';
 import { Path } from '../../base/utils/path';
 import { Objectequals } from '../checking/types.checking';
 
@@ -29,7 +31,7 @@ export const readfileExist = (path:string):any | undefined =>{
    }
 }
 
-export const getDirectoryTree = (path:Path =new Path(process.cwd()))=>{
+export const getDirectoryTree = (path:Path =new Path(LocalPaths.CWD))=>{
 
    return dirTree(path.path);
 }
@@ -56,3 +58,23 @@ function dirTree(filename:string) {
 export const getFilesInDir = (path:Path)=>{
 
 }
+
+export const templatePath = (...dest:any)=> {
+    let filepath = path.join.apply(path, dest);
+
+    if (!path.isAbsolute(filepath)) {
+      filepath = path.join(TemplateEnviroment.templateDownLoadedSourceRoot(), filepath);
+    }
+
+    return filepath;
+  }
+
+ export const destinationPath = (...dest:any)=> {
+    let filepath = path.join.apply(path, dest);
+
+    if (!path.isAbsolute(filepath)) {
+      filepath = path.join(TemplateEnviroment.templateDownLoadedDestinationRoot(), filepath);
+    }
+
+    return filepath;
+  }

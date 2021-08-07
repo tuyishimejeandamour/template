@@ -22,7 +22,7 @@ import { BaseProcessor, Dependency, IFile } from "./base.processor";
 export class NodemodulesProcessor extends BaseProcessor {
     constructor(composition: IPackageTemplate) {
         super(composition);
-         this.template = readfileExist(path.join(process.cwd(),'template.json'))
+         this.template = readfileExist(path.join(LocalPaths.CWD,'template.json'))
         
 
     }
@@ -39,10 +39,10 @@ export class NodemodulesProcessor extends BaseProcessor {
 
     async onEnd(): Promise<void> {
         getDevDependencies().then((a) => {
-            writeJSONSync(path.join(process.cwd(),'template.json'),{...this.template,templateDevDependencies : a})
+            writeJSONSync(path.join(LocalPaths.CWD,'template.json'),{...this.template,templateDevDependencies : a})
          });
           getPeroDependencies().then((c) => {
-            writeJSONSync(path.join(process.cwd(),'template.json'),{...this.template,templateDependencies:c})
+            writeJSONSync(path.join(LocalPaths.CWD,'template.json'),{...this.template,templateDependencies:c})
 
          });
        // console.log("hello there");

@@ -16,7 +16,7 @@ export interface TemplateService{
 export abstract class  NewTemplate  {
     
      private _newtemplate: NewTemplateAnswer  = Object.create(null);
-     currentPath:string = process.cwd();
+     currentPath:string = LocalPaths.CWD;
      overwrite:boolean = false;
      private _templateSettings:IPackageTemplate = Object.create(null);
      

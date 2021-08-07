@@ -6,15 +6,16 @@ import { showInfo } from "../../platform/log/logger.platform";
 import _ from "lodash";
 import { IFrameworks } from "../models/store.model";
 import { checkYARN } from "../../platform/node/package.platform";
+import { LocalPaths } from "../env/path.env";
 const parseSemver = require('parse-semver');
 
 function getNpmDependencies(cwd: string): Promise<string[]> {
-	return Promise.resolve([process.cwd()])
+	return Promise.resolve([LocalPaths.CWD])
 }
 
 export async function DevDependencies() {
 	
-	const cwd = process.cwd()
+	const cwd = LocalPaths.CWD
 	///console.log('in function'+ cwd)
 	//await  checkNPM()
 	const output = await exec('npm list --dev   --loglevel=error', { cwd, maxBuffer: 5000 * 1024 })

@@ -3,14 +3,14 @@ import { showError } from '../log/logger.platform';
 
 
 export const checkExistence = (path: string): boolean => {
-    return fs.existsSync(process.cwd() + path);
+    return fs.existsSync(LocalPaths.CWD + path);
 };
 
 export const checkIfDirExistElseMakeDir = (hasPath: boolean, path: string): void => {
     if (hasPath) {
         let dir = checkExistence(path);
         if (!dir) {
-            fs.mkdirSync(process.cwd() + path, { recursive: true });
+            fs.mkdirSync(LocalPaths.CWD + path, { recursive: true });
         }
     }
 }

@@ -37,3 +37,9 @@ export interface IPackageTemplate {
     structure:any[]
 
 }
+
+export enum PackageTools{
+	NPM   = 'npm install',
+	YARN  = 'yarn add',
+	BOWER = 'bower install'
+}

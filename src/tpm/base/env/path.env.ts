@@ -10,5 +10,6 @@ export const LocalPaths = {
     LOCALAPPDATA:isDefined(process.env.LOCALAPPDATA)?process.env.LOCALAPPDATA :'',
     TPMCONFIG:'.tpmconfig',
     HOMEDRIVE:isDefined(process.env.HOMEDRIVE)?process.env.HOMEDRIVE:'',
+    CWD:process.cwd()
 
 }

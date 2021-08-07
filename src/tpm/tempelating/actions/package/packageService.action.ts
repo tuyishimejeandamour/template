@@ -26,7 +26,7 @@ const stat = denodeify(fs.stat);
 const regex = /^%([\w\d.]+)%$/i;
 const MinimatchOptions: minimatch.IOptions = { dot: true };
 export async function listFiles(
-	cwd = process.cwd(),
+	cwd = LocalPaths.CWD,
 	useYarn?: boolean,
 	packagedDependencies?: string[],
 	ignoreFile?: string
@@ -34,7 +34,7 @@ export async function listFiles(
 	await readcomposition(cwd);
 	return await getTemplateFiles(cwd, useYarn, packagedDependencies);
 }
-export function readcomposition(cwd = process.cwd(), nls = true): Promise<IPackageTemplate> {
+export function readcomposition(cwd = LocalPaths.CWD, nls = true): Promise<IPackageTemplate> {
 	const manifestPath = path.join(cwd, 'package.json');
 	const manifestNLSPath = path.join(cwd, 'package.nls.json');
 	const manifest = readFile(manifestPath, 'utf8')
@@ -195,7 +195,7 @@ function getDefaultPackageName(composition: IPackageTemplate): string {
 }
 
 export async function pack(options: IPackageOptions = {}): Promise<IPackageResult> {
-	const cwd = options.cwd || process.cwd();
+	const cwd = options.cwd || LocalPaths.CWD;
 
 	const composition = await readcomposition(cwd);
 
@@ -214,7 +214,7 @@ export async function pack(options: IPackageOptions = {}): Promise<IPackageResul
 	return { composition, packagePath, files };
 }
 export function gatherFileToCompress(composition: IPackageTemplate, options: IPackageOptions = {}): Promise<IFile[]> {
-	const cwd = options.cwd || process.cwd();
+	const cwd = options.cwd || LocalPaths.CWD;
 	const packagedDependencies = options.dependencyEntryPoints || undefined;
 	const processors = createDefaultProcessors(composition, options);
 
@@ -261,7 +261,7 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 				.compact() // remove falsey values
 				.join(',');
 			const template = processors.reduce((r, p) => ({ ...r, ...p.template }), { assets, tags });
-			writeJSONSync(path.join(process.cwd(),'template.json'),template);
+			writeJSONSync(path.join(LocalPaths.CWD,'template.json'),template);
 			return Promise.all([totemplateXML(template), toContentTypes(files)]).then(result => {
 				return [
 					{ path: 'template.xml', contents: Buffer.from(result[0], 'utf8') },

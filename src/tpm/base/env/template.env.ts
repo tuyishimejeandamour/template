@@ -29,6 +29,8 @@ export class TemplateEnviroment implements ITpmConfigSettings {
     declare static _settingPath: string;
     private static local_settings: Settings;
     private static _currentpublisher: Publisher;
+    private static _sourceRoot:string;
+    private static _destinationRoot:string;
     constructor() {
         TemplateEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, 'tpm.json');
         TemplateEnviroment._settingsJson = this.loadLocalSettings();
@@ -54,7 +56,15 @@ export class TemplateEnviroment implements ITpmConfigSettings {
     public static get publisher(): Publisher {
         return this._currentpublisher
     }
-
+    
+    
+    public static set sourceRoot(v : string) {
+        this._sourceRoot = v;
+    }
+    public static get sourceRoot():string {
+       return this._sourceRoot;
+    }
+    
 
     getversion(): string {
         return TemplateEnviroment._settingsJson.version
@@ -82,5 +92,25 @@ export class TemplateEnviroment implements ITpmConfigSettings {
         }
     }
 
+    static templateDownLoadedSourceRoot(sourcePath?:any){
+        if (typeof sourcePath === 'string') {
+            this.sourceRoot = path.resolve(sourcePath);
+          }
+      
+          return this.sourceRoot;
+    }
+
+    static templateDownLoadedDestinationRoot(rootPath?:any){
+        if (typeof rootPath === 'string') {
+            TemplateEnviroment._destinationRoot = path.resolve(rootPath);
+      
+            if (!fs.existsSync(TemplateEnviroment._destinationRoot)) {
+              fs.mkdirSync(TemplateEnviroment._destinationRoot, {recursive: true});
+            }
+      
+          }
+      
+          return TemplateEnviroment._destinationRoot || LocalPaths.CWD ;
+    }
 
 }

@@ -12,6 +12,7 @@ import { chain, flatten, sequenceExecuteFunction } from "../../../platform/node/
 import _ from "lodash";
 import { createDefaultDeProcessors } from "../../../base/loaders/instantiation.loader";
 import { IDeProcessor, InstallFile } from "./deprocessor/base.deprocessor";
+import { LocalPaths } from "../../../base/env/path.env";
 
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
@@ -85,20 +86,16 @@ export function gatherFileToInstall(composition: IPackageTemplate,temppath:strin
 	const cwd =  temppath;
 	
 	const processors = createDefaultDeProcessors(composition,cwd);
-   console.log("hell")
 	return getTemplateFiles(cwd).then(fileNames => {
-		const files = fileNames.map(f => ({ from:path.join(cwd,f), to: path.join(process.cwd(), f) }));
+		const files = fileNames.map(f => ({ from:path.join(cwd,f), to: path.join(LocalPaths.CWD, f) }));
 		return processTemplate(processors, files);
 	});
 }
 
 export async function processTemplate(processors: IDeProcessor[], files: InstallFile[]): Promise<InstallFile[]> {
-	console.log('hello')
 	const processedFiles = files.map(file => chain(file, processors, (file, processor) => processor.onInit(file)));
-	console.log("hi")
 	return Promise.all(processedFiles).then(files => {
 		return sequenceExecuteFunction(processors.map(p => () => p.process())).then(() => {
-			console.log(files)
 			return files
 		});
 	});

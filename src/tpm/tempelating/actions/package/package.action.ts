@@ -5,7 +5,7 @@ import * as fs from 'fs-extra'
 import { showSuccess } from "../../../platform/log/logger.platform";
 
 const stat = denodeify(fs.stat);
-export const toBePublished =(cwd = process.cwd(),useYarn?: boolean,packagedDependencies?: string[]):Promise<void>=>{
+export const toBePublished =(cwd = LocalPaths.CWD,useYarn?: boolean,packagedDependencies?: string[]):Promise<void>=>{
     return readcomposition(cwd)
     .then(() => getTemplateFiles(cwd, useYarn, packagedDependencies))
     .then(files => {files.forEach(f => console.log(`${f}`));});
