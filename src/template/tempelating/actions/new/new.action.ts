@@ -1,3 +1,4 @@
+import { LocalPaths } from "../../../base/env/path.env";
 import { NewTemplateAnswer } from "../../../base/models/answers.model";
 import { IPackageTemplate } from "../../../base/models/template.model";
 import { newProjectQuestion } from "../../../base/questions/open/newTemplate.question";

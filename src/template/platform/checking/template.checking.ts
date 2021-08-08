@@ -1,8 +1,8 @@
 import { blue, cyan, green, red } from "kleur";
-import { validateTemplateName } from "../node/node.platform";
 import fs from "fs-extra";
 import path from "path";
 import * as semver from 'semver';
+import { validateTemplateName } from "../../base/utils/function.utils";
 export function checkTemplateName(templateName:string) {
     const validationResult = validateTemplateName(templateName);
     if (!validationResult.validForNewPackages) {

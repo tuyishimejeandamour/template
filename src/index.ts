@@ -2,11 +2,11 @@ import { program } from 'commander';
 import { red, yellow } from 'kleur';
 import leven from 'leven';
 import { TEMPLATE } from './template';
-import { TemplateEnviroment } from './tpm/base/env/template.env';
-import { loginPublisher } from './tpm/platform/store/publisherstoreService';
-import { install } from './tpm/tempelating/actions/install/install.action';
+import { TemplateEnviroment } from './template/base/env/template.env';
+import { loginPublisher } from './template/platform/store/publisherstoreService';
+import { install } from './template/tempelating/actions/install/install.action';
 
-import { packTemplate, toBePublished } from './tpm/tempelating/actions/package/package.action';
+import { packTemplate, toBePublished } from './template/tempelating/actions/package/package.action';
 const pkg = require('../package.json')
 
 export function index() {
@@ -34,21 +34,17 @@ export function index() {
 		.command('package [<version>]')
 		.description('Packages an template')
 		.option('--o, --out [path]', 'Output packed template file to [path] location (defaults to <name>-<version>.template)')
-		.option('--y, --yarn', 'Use yarn instead of npm (default yarn if installed)')
-		.option('--n, --npm', 'Use npm instead of yarn (default when yarn doesn\'t exist)')
 		.action(
 			(
 				version,
 				{
-					out,
-					yarn
+					out
 				}
 			) =>
 				TEMPLATE(
 					packTemplate({
 						packagePath: out,
-						version,
-						useYarn: yarn,
+						version
 					})
 				)
 		);
@@ -61,7 +57,8 @@ export function index() {
     program
     .command('drag <package>')
     .description('install package')
-    .action((templatePackage)=>TEMPLATE(install(templatePackage)))
+    .option('--s, --skip', 'skip installation of dependencies and devdependencies')
+    .action((templatePackage,{skip})=>TEMPLATE(install(templatePackage,skip)))
 	// program
 	// 	.command('logout <publisher>')
 	// 	.description('Remove a publisher from the known publishers list')

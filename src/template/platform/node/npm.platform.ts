@@ -6,7 +6,7 @@ export interface PackageInstall{
 }
 
 
-export function scheduleNpmInstall(
+export function PerfomInstall(
    tool:string,
    optionpkg:PackageInstall
 ) 

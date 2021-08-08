@@ -2,6 +2,7 @@ import { writeJSONSync } from "fs-extra";
 import _ from "lodash";
 import { readSync } from "node:fs";
 import path from "path";
+import { LocalPaths } from "../../../../base/env/path.env";
 import { IPackageTemplate } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { Path } from "../../../../base/utils/path";

@@ -1,8 +1,8 @@
-import {  showInfo } from './tpm/platform/log/logger.platform';
-import { Token } from './tpm/base/utils/token.utils';
+import {  showInfo } from './template/platform/log/logger.platform';
+import { Token } from './template/base/utils/token.utils';
 import { isatty } from 'tty';
 import * as semver from 'semver';
-import { getLatestVersion } from './tpm/platform/node/node.platform';
+import { getLatestVersion } from './template/base/utils/function.utils';
 const pkg = require('../package.json');
 
 

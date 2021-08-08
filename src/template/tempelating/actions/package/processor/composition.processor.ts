@@ -5,13 +5,14 @@ import { TemplateEnviroment } from "../../../../base/env/template.env";
 import { IPackageTemplate, TemplateKind } from "../../../../base/models/template.model";
 import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { openQuestion, openValidateQuestion } from "../../../../base/questions/open/open.question";
-import { detectFramework } from "../../../../base/utils/dependencies.utils";
-import { getRepository, getUrl, isGitHubRepository, read } from "../../../../platform/node/node.platform";
+import { detectFramework } from "../../../../platform/node/dependencies.utils";
 import { Path } from "../../../../base/utils/path";
 import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
 import { showInfo, showWarn } from "../../../../platform/log/logger.platform";
 import { loginPublisher } from "../../../../platform/store/publisherstoreService";
 import { BaseProcessor, IFile } from "./base.processor";
+import { getRepository, getUrl, isGitHubRepository } from "../../../../base/utils/function.utils";
+import { LocalPaths } from "../../../../base/env/path.env";
 
 export class CompositionProcessor extends BaseProcessor {
 	private templateComposition: IPackageTemplate = Object.create(null);

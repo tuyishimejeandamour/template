@@ -1,45 +1,65 @@
-
-import { Token } from "../../base/utils/token.utils";
-import { exec } from "./node.platform";
+import { IPackageDependencies } from "./dependencies.utils";
 
 
-export  async function checkNPM(cancellationToken?: Token): Promise<boolean> {
-     let isInstalled = false;
-    const output =  await exec('npm -v',{},cancellationToken)
-       const version = output.stdout.trim();
-       if (version) {
-         isInstalled = true
+  export class PackageDependencies implements IPackageDependencies {
+    /**
+     * @private
+     * Resolve the dependencies to be added to the package.json.
+     *
+     * @param {Object|string|string[]} dependencies
+     * @return {Promise} a 'packageName: packageVersion' object
+     */
+    async _resolvePackageJsonDependencies(dependencies:any) {
+      if (typeof dependencies === 'string') {
+        dependencies = [dependencies];
+      } else if (typeof dependencies !== 'object') {
+        throw new TypeError(
+          'resolvePackageJsonDependencies requires an object'
+        );
+      } else if (!Array.isArray(dependencies)) {
+        dependencies = await Promise.all(
+          Object.entries(dependencies).map(([pkg, version]) =>
+            version
+              ? Promise.resolve([pkg, version])
+              : this.env.resolvePackage(pkg, version)
+          )
+        );
+        return Object.fromEntries(
+          dependencies.filter((...args) => args.length > 0 && args[0])
+        );
+      }
+
+      const entries = await Promise.all(
+        dependencies.map((dependency:any) => this.env.resolvePackage(dependency))
+      );
+      return Object.fromEntries(entries);
     }
 
-     return Promise.resolve(isInstalled)
-}
-export function checkYARN(cancellationToken?: Token): Promise<boolean> {
- let isInstalled = false;
-   exec('yarn -v', {}, cancellationToken).then(({ stdout }) => {
-       const version = stdout.trim();
+    /**
+     * Add dependencies to the destination the package.json.
+     *
+     * @param {Object|string|string[]} dependencies
+     * @return {Promise} a 'packageName: packageVersion' object
+     */
+    async addDependencies(dependencies:any) {
+      dependencies = await this._resolvePackageJsonDependencies(dependencies);
+      this.packageJson.merge({dependencies});
+      return dependencies;
+    }
 
-       if (version) {
-           isInstalled = true;
-       }
-   }).catch(_=>{
+    /**
+     * Add dependencies to the destination the package.json.
+     *
+     * @param {Object|string|string[]} dependencies
+     * @return {Promise} a 'packageName: packageVersion' object
+     */
+    async addDevDependencies(devDependencies:any) {
+      devDependencies = await this._resolvePackageJsonDependencies(
+        devDependencies
+      );
+      this.packageJson.merge({devDependencies});
+      return devDependencies;
+    }
 
- }
- );
-
-return Promise.resolve(isInstalled);
-}
-export function checkBOWER(cancellationToken?: Token): Promise<boolean> {
- let isInstalled = false;
-   exec('bower -v', {}, cancellationToken).then(({ stdout }) => {
-       const version = stdout.trim();
-       if (version) {
-           isInstalled = true;
-       }
-   }).catch(_=>{
-
- }
- );
-
-return Promise.resolve(isInstalled);
-}
+  }	
 

@@ -66,12 +66,12 @@ export function getTemplateFiles(
 }
 
 
-export async function Install(temppath:string): Promise<InstallFile[]> {
+export async function Install(temppath:string,installoption:boolean): Promise<InstallFile[]> {
 	const cwd = temppath;
 
 	const composition = await readcomposition(cwd);
 
-	const files = await gatherFileToInstall(composition,cwd);
+	const files = await gatherFileToInstall(composition,cwd,installoption);
 	const jsFiles = files.filter(f => /\.js$/i.test(f.to));
 
 	if (files.length > 5000 || jsFiles.length > 100) {
@@ -82,10 +82,10 @@ export async function Install(temppath:string): Promise<InstallFile[]> {
 
 	return  files ;
 }
-export function gatherFileToInstall(composition: IPackageTemplate,temppath:string): Promise<InstallFile[]> {
+export function gatherFileToInstall(composition: IPackageTemplate,temppath:string,installopt?:boolean): Promise<InstallFile[]> {
 	const cwd =  temppath;
 	
-	const processors = createDefaultDeProcessors(composition,cwd);
+	const processors = createDefaultDeProcessors(composition,cwd,installopt);
 	return getTemplateFiles(cwd).then(fileNames => {
 		const files = fileNames.map(f => ({ from:path.join(cwd,f), to: path.join(LocalPaths.CWD, f) }));
 		return processTemplate(processors, files);

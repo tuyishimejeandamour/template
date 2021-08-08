@@ -1,14 +1,30 @@
 import path from "path";
-import { exec } from "../../platform/node/node.platform";
+import { exec } from "./node.platform";
 import * as cp from 'child_process';
-import { exists, existsSync } from "fs-extra";
-import { showInfo } from "../../platform/log/logger.platform";
+import {  existsSync } from "fs-extra";
+import { showInfo } from "../log/logger.platform";
 import _ from "lodash";
-import { IFrameworks } from "../models/store.model";
-import { checkYARN } from "../../platform/node/package.platform";
-import { LocalPaths } from "../env/path.env";
+import { IFrameworks } from "../../base/models/store.model";
+import { LocalPaths } from "../../base/env/path.env";
+import { PackageInstall, PerfomInstall } from "./npm.platform";
+import assert from "assert";
+import { yellow } from "kleur";
+import { Token } from "../../base/utils/token.utils";
 const parseSemver = require('parse-semver');
 
+
+export interface PackageInstallOption{
+	yarn:boolean,
+	npm:boolean,
+	bower:boolean,
+	skipMessage:boolean
+}
+
+
+export interface IPackageDependencies{
+	_resolvePackageJsonDependencies:(dependencies:any)=> Promise<{[k: string]: any}>;
+	addDependencies:(dependency:any)=> Promise<any>;
+}
 function getNpmDependencies(cwd: string): Promise<string[]> {
 	return Promise.resolve([LocalPaths.CWD])
 }
@@ -182,4 +198,94 @@ export async function detectFramework(params:string):Promise<IFrameworks> {
 		version:'^17.0.2'
 	}
 	)
+}
+
+export const installDependencies = (options: PackageInstallOption)=>{
+	options = options || {};
+	const message = {
+	  commands: [] as string[],
+	  template: _.template(
+		"\n\nI'm all done. " +
+		  '<%= skipInstall ? "Just run" : "Running" %> <%= commands %> ' +
+		  '<%= skipInstall ? "" : "for you " %>to install the required dependencies.' +
+		  '<% if (!skipInstall) { %> If this fails, try running the command yourself.<% } %>\n\n'
+	  )
+	};
+  
+	const getOptions = (options: any) => {
+	  return typeof options === 'object' ? options : null;
+	};
+  
+	if (options.npm !== false) {
+	  message.commands.push('npm install');
+	  PerfomInstall('npm', getOptions(options.npm));
+	}
+  
+	if (options.yarn) {
+	  message.commands.push('yarn install');
+	  PerfomInstall('yarn', getOptions(options.yarn));
+	}
+  
+	if (options.bower) {
+	  message.commands.push('bower install');
+	  PerfomInstall('bower', getOptions(options.bower));
+	}
+  
+	assert(
+	  message.commands.length,
+	  'installDependencies needs at least one of `npm`, `bower` or `yarn` to run.'
+	);
+  
+	if (!options.skipMessage) {
+	  const tplValues = _.extend(
+		{
+		  skipInstall: false
+		},
+		{
+		  commands: yellow(message.commands.join(' && '))
+		}
+	  );
+	  showInfo(message.template(tplValues));
+	}
+  };
+
+
+export  async function checkNPM(cancellationToken?: Token): Promise<boolean> {
+	let isInstalled = false;
+   const output =  await exec('npm -v',{},cancellationToken)
+	  const version = output.stdout.trim();
+	  if (version) {
+		isInstalled = true
+   }
+
+	return Promise.resolve(isInstalled)
+}
+export function checkYARN(cancellationToken?: Token): Promise<boolean> {
+let isInstalled = false;
+  exec('yarn -v', {}, cancellationToken).then(({ stdout }) => {
+	  const version = stdout.trim();
+
+	  if (version) {
+		  isInstalled = true;
+	  }
+  }).catch(_=>{
+
+}
+);
+
+return Promise.resolve(isInstalled);
+}
+export function checkBOWER(cancellationToken?: Token): Promise<boolean> {
+let isInstalled = false;
+  exec('bower -v', {}, cancellationToken).then(({ stdout }) => {
+	  const version = stdout.trim();
+	  if (version) {
+		  isInstalled = true;
+	  }
+  }).catch(_=>{
+
+}
+);
+
+return Promise.resolve(isInstalled);
 }

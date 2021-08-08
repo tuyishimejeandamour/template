@@ -16,7 +16,7 @@ export function createDefaultProcessors(composition: IPackageTemplate, options: 
 	];
 }
 
-export function createDefaultDeProcessors(composition:IPackageTemplate,path:string):IDeProcessor[]{
+export function createDefaultDeProcessors(composition:IPackageTemplate,path:string,opt?:boolean):IDeProcessor[]{
 
 	return[
 		new CompositionDeprocessor(composition,path)

@@ -2,12 +2,12 @@
 import denodeify from "denodeify";
 import  fs  from "fs-extra";
 import { IPackageTemplate } from "../../../../base/models/template.model";
-import { isGitHubRepository, isGitLabRepository } from "../../../../platform/node/node.platform";
 import { Path } from "../../../../base/utils/path";
 import { BaseProcessor, IFile, INonStoredFile, IPackageOptions } from "./base.processor";
 import markdownit from 'markdown-it';
 import * as cheerio from 'cheerio';
 import * as url from 'url';
+import { isGitHubRepository, isGitLabRepository } from "../../../../base/utils/function.utils";
 const  urljoin  = require('url-join');
 const readFile = denodeify<string, string, string>(fs.readFile);
 
