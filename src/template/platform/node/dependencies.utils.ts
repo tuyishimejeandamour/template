@@ -24,6 +24,9 @@ export interface PackageInstallOption{
 export interface IPackageDependencies{
 	_resolvePackageJsonDependencies:(dependencies:any)=> Promise<{[k: string]: any}>;
 	addDependencies:(dependency:any)=> Promise<any>;
+	resolvePackage:(dependency:any)=>Promise<any>;
+	addDevDependencies:(dependency:any)=>Promise<any>
+
 }
 function getNpmDependencies(cwd: string): Promise<string[]> {
 	return Promise.resolve([LocalPaths.CWD])

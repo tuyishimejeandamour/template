@@ -4,7 +4,7 @@ export interface IDeProcessor{
     path:string,
     composition:IPackageTemplate
     onInit:(file:InstallFile)=>Promise<InstallFile>
-    process:()=>Promise<void>
+    onprocess:()=>Promise<void>
 }
 
 
@@ -43,7 +43,7 @@ export class BaseDiprocessor implements IDeProcessor {
       return Promise.resolve(file)
     };
     
-    process():Promise<void>{
+    onprocess():Promise<void>{
         return Promise.resolve()
     };
 }

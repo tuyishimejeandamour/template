@@ -13,6 +13,7 @@ import { createDefaultDeProcessors } from "../../../base/loaders/instantiation.l
 import { IDeProcessor, InstallFile } from "./deprocessor/base.deprocessor";
 import { LocalPaths } from "../../../base/env/path.env";
 import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/function.utils";
+import { TemplateEnviroment } from "../../../base/env/template.env";
 
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
@@ -69,9 +70,10 @@ export function getTemplateFiles(
 export async function Install(temppath:string,installoption:boolean): Promise<InstallFile[]> {
 	const cwd = temppath;
 
-	const composition = await readcomposition(cwd);
+	TemplateEnviroment.packageJson = await readcomposition(cwd);
 
-	const files = await gatherFileToInstall(composition,cwd,installoption);
+	const files = await gatherFileToInstall(TemplateEnviroment.packageJson,cwd,installoption);
+	console.log(files)
 	const jsFiles = files.filter(f => /\.js$/i.test(f.to));
 
 	if (files.length > 5000 || jsFiles.length > 100) {
@@ -87,7 +89,7 @@ export function gatherFileToInstall(composition: IPackageTemplate,temppath:strin
 	
 	const processors = createDefaultDeProcessors(composition,cwd,installopt);
 	return getTemplateFiles(cwd).then(fileNames => {
-		const files = fileNames.map(f => ({ from:path.join(cwd,f), to: path.join(LocalPaths.CWD, f) }));
+		const files = fileNames.map(f => ({ from:path.join(cwd,f),category:undefined, to: path.join(LocalPaths.CWD, f) }));
 		return processTemplate(processors, files);
 	});
 }
@@ -95,7 +97,7 @@ export function gatherFileToInstall(composition: IPackageTemplate,temppath:strin
 export async function processTemplate(processors: IDeProcessor[], files: InstallFile[]): Promise<InstallFile[]> {
 	const processedFiles = files.map(file => chain(file, processors, (file, processor) => processor.onInit(file)));
 	return Promise.all(processedFiles).then(files => {
-		return sequenceExecuteFunction(processors.map(p => () => p.process())).then(() => {
+		return sequenceExecuteFunction(processors.map(p => () => p.onprocess())).then(() => {
 			return files
 		});
 	});

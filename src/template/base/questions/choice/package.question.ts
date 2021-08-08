@@ -1,6 +1,4 @@
 import inquirer from "inquirer";
-import { checkNPM, checkYARN, checkBOWER } from "../../../platform/node/package.platform";
-import { Token } from "../../utils/token.utils";
 
 export async function choosePackage(): Promise<string> {
     const listOfPackages = [

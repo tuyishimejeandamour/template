@@ -1,4 +1,4 @@
-export interface ITpmConfigSettings{
+export interface ITemplateConfigSettings{
     getversion?:()=>string,
     getsupportedframework?:()=>IFrameworks[],
     updatesettings?:()=>void

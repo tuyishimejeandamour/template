@@ -1,3 +1,4 @@
+import { TemplateEnviroment } from "../../base/env/template.env";
 import { IPackageDependencies } from "./dependencies.utils";
 
 
@@ -8,6 +9,8 @@ import { IPackageDependencies } from "./dependencies.utils";
      *
      * @param {Object|string|string[]} dependencies
      * @return {Promise} a 'packageName: packageVersion' object
+     * 
+     * 
      */
     async _resolvePackageJsonDependencies(dependencies:any) {
       if (typeof dependencies === 'string') {
@@ -21,18 +24,15 @@ import { IPackageDependencies } from "./dependencies.utils";
           Object.entries(dependencies).map(([pkg, version]) =>
             version
               ? Promise.resolve([pkg, version])
-              : this.env.resolvePackage(pkg, version)
+              : this.resolvePackage(pkg, version)
           )
         );
         return Object.fromEntries(
-          dependencies.filter((...args) => args.length > 0 && args[0])
+          dependencies.filter((...args:any) => args.length > 0 && args[0])
         );
       }
 
-      const entries = await Promise.all(
-        dependencies.map((dependency:any) => this.env.resolvePackage(dependency))
-      );
-      return Object.fromEntries(entries);
+      return Object.fromEntries(dependencies.filter((...args:any)=> args.length>0 && args[0].length>0));
     }
 
     /**
@@ -43,7 +43,7 @@ import { IPackageDependencies } from "./dependencies.utils";
      */
     async addDependencies(dependencies:any) {
       dependencies = await this._resolvePackageJsonDependencies(dependencies);
-      this.packageJson.merge({dependencies});
+      TemplateEnviroment.packageJson.merge({dependencies});
       return dependencies;
     }
 
@@ -57,9 +57,24 @@ import { IPackageDependencies } from "./dependencies.utils";
       devDependencies = await this._resolvePackageJsonDependencies(
         devDependencies
       );
-      this.packageJson.merge({devDependencies});
+      TemplateEnviroment.packageJson.merge({devDependencies});
       return devDependencies;
     }
 
+    async  resolvePackage(...args:any):Promise<[string,string]> {
+
+      if (typeof args != 'string' || !Array.isArray(args)) {
+        return Promise.resolve(['',''])
+      }
+      if (args.length>0 && args[0]) {
+        return Promise.resolve([args[0],args[1]])
+      }
+
+      const arrayargs = args.split('@');
+      return Promise.resolve([arrayargs[0],arrayargs[1]])
+    }
+
   }	
+
+
 

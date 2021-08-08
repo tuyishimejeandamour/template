@@ -13,5 +13,6 @@ export const install = async (templatePackage:string,skip:boolean):Promise<any>=
    const tempPath:string = await downloadPackage(templatePackage);
     TemplateEnviroment.packageuse = await choosePackage()
     const name = await Install(tempPath,skip)
+    console.log(TemplateEnviroment.packageJson)
     showSuccess(`successed to install ${name.length} from package `)
 }

@@ -1,6 +1,6 @@
 
+import { checkNPM } from "../../platform/node/dependencies.utils"
 import { exec } from "../../platform/node/node.platform"
-import { checkNPM } from "../../platform/node/package.platform"
 import { Token } from "./token.utils"
 
 export function validateTemplateName(name:string){

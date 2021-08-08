@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 import { Objectequals } from '../../platform/checking/types.checking';
 import { load } from '../../platform/store/publisherstoreService';
-import { IFrameworks, ITpmConfigSettings, Publisher, Settings } from '../models/store.model';
+import { IFrameworks, ITemplateConfigSettings, Publisher, Settings } from '../models/store.model';
 import { LocalPaths } from './path.env'
 
 export enum TPMGLOBALS {
@@ -21,7 +21,7 @@ export enum TPMGLOBALS {
 /**
  * we need to intantiate this local variable in order to access all it data
  */
-export class TemplateEnviroment implements ITpmConfigSettings {
+export class TemplateEnviroment implements ITemplateConfigSettings {
     declare static _settingsJson: Settings;
     declare static _isUpToDate: boolean;
     declare static _isnewUser: boolean;
@@ -31,6 +31,7 @@ export class TemplateEnviroment implements ITpmConfigSettings {
     private static _currentpublisher: Publisher;
     private static _sourceRoot:string;
     private static _destinationRoot:string;
+    declare static packageJson:any;
     constructor() {
         TemplateEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, 'tpm.json');
         TemplateEnviroment._settingsJson = this.loadLocalSettings();
