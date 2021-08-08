@@ -6,9 +6,6 @@ import { showInfo } from "../log/logger.platform";
 import _ from "lodash";
 import { IFrameworks } from "../../base/models/store.model";
 import { LocalPaths } from "../../base/env/path.env";
-import { PackageInstall, PerfomInstall } from "./npm.platform";
-import assert from "assert";
-import { yellow } from "kleur";
 import { Token } from "../../base/utils/token.utils";
 const parseSemver = require('parse-semver');
 
@@ -203,54 +200,6 @@ export async function detectFramework(params:string):Promise<IFrameworks> {
 	)
 }
 
-export const installDependencies = (options: PackageInstallOption)=>{
-	options = options || {};
-	const message = {
-	  commands: [] as string[],
-	  template: _.template(
-		"\n\nI'm all done. " +
-		  '<%= skipInstall ? "Just run" : "Running" %> <%= commands %> ' +
-		  '<%= skipInstall ? "" : "for you " %>to install the required dependencies.' +
-		  '<% if (!skipInstall) { %> If this fails, try running the command yourself.<% } %>\n\n'
-	  )
-	};
-  
-	const getOptions = (options: any) => {
-	  return typeof options === 'object' ? options : null;
-	};
-  
-	if (options.npm !== false) {
-	  message.commands.push('npm install');
-	  PerfomInstall('npm', getOptions(options.npm));
-	}
-  
-	if (options.yarn) {
-	  message.commands.push('yarn install');
-	  PerfomInstall('yarn', getOptions(options.yarn));
-	}
-  
-	if (options.bower) {
-	  message.commands.push('bower install');
-	  PerfomInstall('bower', getOptions(options.bower));
-	}
-  
-	assert(
-	  message.commands.length,
-	  'installDependencies needs at least one of `npm`, `bower` or `yarn` to run.'
-	);
-  
-	if (!options.skipMessage) {
-	  const tplValues = _.extend(
-		{
-		  skipInstall: false
-		},
-		{
-		  commands: yellow(message.commands.join(' && '))
-		}
-	  );
-	  showInfo(message.template(tplValues));
-	}
-  };
 
 
 export  async function checkNPM(cancellationToken?: Token): Promise<boolean> {

@@ -32,7 +32,7 @@ import { IPackageDependencies } from "./dependencies.utils";
         );
       }
 
-      return Object.fromEntries(dependencies.filter((...args:any)=> args.length>0 && args[0].length>0));
+      return Object.fromEntries(dependencies.map((args:any)=> this.resolvePackage(args)));
     }
 
     /**
