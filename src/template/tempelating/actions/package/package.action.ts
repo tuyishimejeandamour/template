@@ -4,6 +4,8 @@ import { IPackageOptions } from "./processor/base.processor";
 import * as fs from 'fs-extra'
 import { showSuccess } from "../../../platform/log/logger.platform";
 import { LocalPaths } from "../../../base/env/path.env";
+import { TemplateEnviroment } from "../../../base/env/template.env";
+import { CompositionProcessor } from "./processor/composition.processor";
 
 const stat = denodeify(fs.stat);
 export const toBePublished =(cwd = LocalPaths.CWD,useYarn?: boolean,packagedDependencies?: string[]):Promise<void>=>{
@@ -13,6 +15,7 @@ export const toBePublished =(cwd = LocalPaths.CWD,useYarn?: boolean,packagedDepe
 }
 
 export const packTemplate = async (options:IPackageOptions):Promise<any>=>{
+
    	const { packagePath, files } = await pack(options);
 	const stats = await stat(packagePath) as fs.Stats;
 

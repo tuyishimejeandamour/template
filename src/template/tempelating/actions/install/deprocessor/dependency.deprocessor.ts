@@ -3,7 +3,7 @@ import { yellow } from "kleur";
 import _ from "lodash";
 import { IPackageTemplate } from "../../../../base/models/template.model";
 import { showInfo } from "../../../../platform/log/logger.platform";
-import { PerfomInstall } from "../../../../platform/node/install.platform";
+import { PackageInstallOption, PerfomInstall } from "../../../../platform/node/install.platform";
 import { BaseDiprocessor, InstallFile } from "./base.deprocessor";
 
 
@@ -17,23 +17,18 @@ export class DependenciesDeprocessor extends BaseDiprocessor {
     }
 
     onInit(file: InstallFile): Promise<InstallFile> {
-        if (this.composition.templateKind == 'starter') {
-            return Promise.resolve(file)
-        } else {
-
-        }
 
         return Promise.resolve(file)
-
 
     }
 
     onprocess(): Promise<void> {
+        
 
         return Promise.resolve()
     }
 
-    installDependencies(options: any) {
+    installDependencies(_package:string[],options: PackageInstallOption) {
         options = options || {};
         const message = {
             commands: [] as string[],

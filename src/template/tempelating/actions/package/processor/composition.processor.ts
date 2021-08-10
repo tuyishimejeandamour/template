@@ -1,4 +1,4 @@
-import { existsSync, readFile, readFileSync, writeJSONSync } from "fs-extra";
+import { existsSync, readFileSync, writeJSONSync } from "fs-extra";
 import _ from "lodash";
 import path from "path";
 import { TemplateEnviroment } from "../../../../base/env/template.env";
@@ -26,7 +26,7 @@ export class CompositionProcessor extends BaseProcessor {
 
 		if (existsSync(path.join(LocalPaths.CWD, 'template.json'))) {
 			showInfo("template.json exit we will use it");
-					this.templateComposition = JSON.parse(readFileSync(path.join(LocalPaths.CWD, 'template.json')).toString());
+			this.templateComposition = JSON.parse(readFileSync(path.join(LocalPaths.CWD, 'template.json')).toString());
 		}
 
 
@@ -88,7 +88,7 @@ export class CompositionProcessor extends BaseProcessor {
 			const answer = await openValidateQuestion('templateking', 'input', 'provide category of template', this.checktemplatekind);
 			this.template = {
 				...this.template,
-				templateKind: [answer.templateking] as TemplateKind[]
+				templateKind: answer.templateking as TemplateKind
 			}
 			this.composition.templateKind = answer.templateking as TemplateKind;
 		}
@@ -134,7 +134,7 @@ export class CompositionProcessor extends BaseProcessor {
 
 		return composition;
 	}
-	private checktemplatekind(kind: string) {
+	checktemplatekind(kind: string) {
 		const categories = ['starter', 'component', 'page', 'layout', 'tool']
 		const n = categories.findIndex(element => element == kind);
 		if (n > -1) {

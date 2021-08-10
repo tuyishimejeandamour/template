@@ -32,6 +32,7 @@ export class TemplateEnviroment implements ITemplateConfigSettings {
     private static _sourceRoot:string;
     private static _destinationRoot:string;
     declare static packageJson:any;
+    declare static typeproject:string;
     constructor() {
         TemplateEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, 'tpm.json');
         TemplateEnviroment._settingsJson = this.loadLocalSettings();

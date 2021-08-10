@@ -1,4 +1,4 @@
-import fs  from "fs-extra";
+import fs from "fs-extra";
 import { NewTemplateAnswer } from "../../../base/models/answers.model";
 import { overwriteFileQuestion } from "../../../base/questions/choice/fileExist.question";
 import { Path } from "../../../base/utils/path";
@@ -9,49 +9,48 @@ import { NewTemplate, TemplateService } from "./new.action";
 
 
 export class NewTemplateService extends NewTemplate implements TemplateService {
-    
+
     private templateInfo = this.readTpmIfexit();
-    
+
     constructor() {
         super();
     }
-    async createtemplateJson(){
+    async createtemplateJson() {
         const path = new Path(this.currentPath)
         const filepath = path.join('template.json');
-         
-         if (isUndefined(this.templateInfo)) {
 
-             fs.writeJSONSync(filepath,this.newtemplate)
-         }else
-         {
-          updatejsonfile(filepath,this.templateInfo,this.newtemplate);
-           
-         }
-        
-    };
-    watchPackageJson():void{
+        if (isUndefined(this.templateInfo)) {
+
+            fs.writeJSONSync(filepath, this.newtemplate)
+        } else {
+            updatejsonfile(filepath, this.templateInfo, this.newtemplate);
+
+        }
 
     };
+    watchPackageJson(): void {
 
-    async asktemplatequestion(): Promise<NewTemplateAnswer>{
+    };
 
-        if(isUndefined(this.templateInfo)){
+    async asktemplatequestion(): Promise<NewTemplateAnswer> {
+
+        if (isUndefined(this.templateInfo)) {
             return this.ask();
-            
-        }else{
+
+        } else {
             const question = await overwriteFileQuestion();
-            if (question) {
+            if (question.overwrite) {
                 this.overwrite = true;
-              return this.ask();
+                return this.ask();
             }
         }
-       
+
         process.exit(1);
-       
+
     }
-    
 
 
 
-    
+
+
 }

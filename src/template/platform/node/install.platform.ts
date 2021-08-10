@@ -9,6 +9,12 @@ export interface PackageInstall {
     option: string,
 }
 
+export interface PackageInstallOption{
+	yarn:boolean,
+	npm:boolean,
+	bower:boolean,
+	skipMessage:boolean
+}
 
 export function PerfomInstall(
     packagemanger: string,

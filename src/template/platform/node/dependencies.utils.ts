@@ -1,5 +1,5 @@
 import path from "path";
-import { exec } from "./node.platform";
+import { CommandAsync, exec } from "./node.platform";
 import * as cp from 'child_process';
 import {  existsSync } from "fs-extra";
 import { showInfo } from "../log/logger.platform";
@@ -9,13 +9,6 @@ import { LocalPaths } from "../../base/env/path.env";
 import { Token } from "../../base/utils/token.utils";
 const parseSemver = require('parse-semver');
 
-
-export interface PackageInstallOption{
-	yarn:boolean,
-	npm:boolean,
-	bower:boolean,
-	skipMessage:boolean
-}
 
 
 export interface IPackageDependencies{
@@ -34,7 +27,7 @@ export async function DevDependencies() {
 	const cwd = LocalPaths.CWD
 	///console.log('in function'+ cwd)
 	//await  checkNPM()
-	const output = await exec('npm list --dev   --loglevel=error', { cwd, maxBuffer: 5000 * 1024 })
+	const output = CommandAsync('npm',['list','--dev','--loglevel=error'],{ cwd, maxBuffer: 5000 * 1024 })
 	 return Promise.resolve(output.stdout.split(/[\r\n]/).filter(dir => dir))
 		//.then(({ stdout }) => {console.log("tttt"+stdout); return });
 }

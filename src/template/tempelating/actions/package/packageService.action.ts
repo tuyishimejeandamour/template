@@ -19,6 +19,8 @@ import { writeJSONSync } from "fs-extra";
 import { overwriteFileQuestion } from "../../../base/questions/choice/fileExist.question";
 import { Path } from "../../../base/utils/path";
 import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/function.utils";
+import { openValidateQuestion } from "../../../base/questions/open/open.question";
+import { TemplateEnviroment } from "../../../base/env/template.env";
 const yazl = require('yazl');
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
@@ -29,7 +31,6 @@ export async function listFiles(
 	cwd = LocalPaths.CWD,
 	useYarn?: boolean,
 	packagedDependencies?: string[],
-	ignoreFile?: string
 ): Promise<string[]> {
 	await readcomposition(cwd);
 	return await getTemplateFiles(cwd, useYarn, packagedDependencies);
@@ -129,7 +130,7 @@ export function getTemplateFiles(
 				])
 
 				// Combine with default ignore list
-				.then(ignore => [...defaultignorefileandfolder, ...ignore, ...notIgnored])
+				.then(ignore =>  [...defaultignorefileandfolder, ...ignore, ...notIgnored])
 
 				// Split into ignore and negate list
 				.then(ignore => _.partition(ignore, i => !/^\s*!/.test(i)))
@@ -196,12 +197,12 @@ function getDefaultPackageName(composition: IPackageTemplate): string {
 
 export async function pack(options: IPackageOptions = {}): Promise<IPackageResult> {
 	const cwd = options.cwd || LocalPaths.CWD;
-
+       
 	const composition = await readcomposition(cwd);
+	TemplateEnviroment.typeproject = (await openValidateQuestion('templateking', 'input', 'provide category of template', new CompositionProcessor(composition).checktemplatekind)).templateking
 
 	const files = await gatherFileToCompress(composition, options);
 	const jsFiles = files.filter(f => /\.js$/i.test(f.path));
-    console.log("hello")
 	if (files.length > 5000 || jsFiles.length > 100) {
 		console.log(
 			`This extension consists of ${files.length} files, out of which ${jsFiles.length} are JavaScript files. For performance reasons, you should bundle your extension: https://aka.ms/vscode-bundle-extension . You should also exclude unnecessary files by adding them to your .vscodeignore: https://aka.ms/vscode-vscodeignore`

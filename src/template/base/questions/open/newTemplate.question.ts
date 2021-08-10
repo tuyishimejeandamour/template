@@ -1,8 +1,12 @@
 import inquirer from 'inquirer';
+import path from 'path';
+import { LocalPaths } from '../../env/path.env';
 import {  NewTemplateAnswer } from '../../models/answers.model';
 import { InputTypeText } from '../../models/input.model';
+const pkg  =  require(`${path.join(LocalPaths.CWD,'package.json')}`)
 
 export async function newProjectQuestion(): Promise<NewTemplateAnswer> {
+    console.log(pkg)
       const question:InputTypeText[] =[
           {
             name: 'project',
@@ -14,7 +18,8 @@ export async function newProjectQuestion(): Promise<NewTemplateAnswer> {
                 }else{
                     return "project name is mandatory"
                 }
-            }
+            },
+            default:pkg.name
           },
           {
             name: 'framework',
@@ -32,7 +37,7 @@ export async function newProjectQuestion(): Promise<NewTemplateAnswer> {
             name: 'description',
             type: 'input',
             message: 'description:',
-            
+            default:pkg.discription
           },
           {
             name: 'category',
