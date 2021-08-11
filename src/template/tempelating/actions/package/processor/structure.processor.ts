@@ -1,5 +1,7 @@
 
+import { TemplateEnviroment } from "../../../../base/env/template.env";
 import { BaseProcessor, IFile } from "./base.processor";
+import util from 'util'
 
 /**
  * this class will process  all files and collect all files
@@ -26,20 +28,11 @@ import { BaseProcessor, IFile } from "./base.processor";
 	}
 
 	async onEnd() {
-		if (this.duplicates.size === 0) {
-			return;
+		if (TemplateEnviroment.packageStructure) {
+			
+            console.log(util.inspect(TemplateEnviroment.packageStructure, false, null));
+
 		}
-
-		const messages = [
-			`The following files have the same case insensitive path, which isn't supported`,
-		];
-
-		for (const lower of this.duplicates) {
-			for (const filePath of this.files.get(lower)as string[]) {
-				messages.push(`  - ${filePath}`);
-			}
-		}
-
-		throw new Error(messages.join('\n'));
 	}
+	
 }

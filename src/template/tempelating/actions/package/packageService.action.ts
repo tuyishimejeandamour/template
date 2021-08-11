@@ -21,6 +21,8 @@ import { Path } from "../../../base/utils/path";
 import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/function.utils";
 import { openValidateQuestion } from "../../../base/questions/open/open.question";
 import { TemplateEnviroment } from "../../../base/env/template.env";
+import { displayDirectory } from "../../../platform/files/file.platform";
+import { fileSync } from "tmp";
 const yazl = require('yazl');
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
@@ -69,7 +71,7 @@ export function readcomposition(cwd = LocalPaths.CWD, nls = true): Promise<IPack
 }
 
 function patch(translations: ITranslations): any {
-    return (value:any) => {
+	return (value: any) => {
 		if (typeof value !== 'string') {
 			return;
 		}
@@ -92,8 +94,8 @@ export function mergecompositon(manifest: IPackageTemplate, translations: ITrans
 export function collectAllTemplateFiles(cwd: string, useYarn?: boolean, dependencyEntryPoints?: string[]): Promise<string[]> {
 	return getDependencies(cwd, useYarn, dependencyEntryPoints).then(deps => {
 		const promises: Promise<string[]>[] = deps.map(dep => {
-			return __glob('**', { cwd: dep, nodir: true, dot: true, ignore: 'node_modules/**' }).then((files:any[]) =>{	
-			return files.map(f => path.relative(cwd, path.join(dep, f))).map(f => f.replace(/\\/g, '/'))
+			return __glob('**', { cwd: dep, nodir: true, dot: true, ignore: 'node_modules/**' }).then((files: any[]) => {
+				return files.map(f => path.relative(cwd, path.join(dep, f))).map(f => f.replace(/\\/g, '/'))
 			});
 		});
 
@@ -130,7 +132,14 @@ export function getTemplateFiles(
 				])
 
 				// Combine with default ignore list
-				.then(ignore =>  [...defaultignorefileandfolder, ...ignore, ...notIgnored])
+				.then(ignore => {
+					if (TemplateEnviroment.typeproject == "starter") {
+						return [...['**/.git/**'], ...ignore, ...notIgnored]
+					}
+					return [...defaultignorefileandfolder, ...ignore, ...notIgnored]
+
+				}
+				)
 
 				// Split into ignore and negate list
 				.then(ignore => _.partition(ignore, i => !/^\s*!/.test(i)))
@@ -148,13 +157,16 @@ export function getTemplateFiles(
 	});
 }
 
-export const  getDevDependencies = async ():Promise<any>=>{
-	return  DevDependencies();
+export const getDevDependencies = async (): Promise<any> => {
+	//return Promise.resolve([{ name: 'react', version: '^17.0.2' }])
+	return DevDependencies().catch((err)=>{
+		throw new Error(err);
+		
+	});
 }
-export const getPeroDependencies = ():Promise<Dependency[]>=>{
+export const getPeroDependencies = (): Promise<Dependency[]> => {
 
-
-	return Promise.resolve([{name:'react',version:'^17.0.2'}])
+	return Promise.resolve([{ name: 'react', version: '^17.0.2' }])
 }
 
 export async function getPackagePath(cwd: string, manifest: IPackageTemplate, options: IPackageOptions = {}): Promise<string> {
@@ -175,17 +187,17 @@ export async function getPackagePath(cwd: string, manifest: IPackageTemplate, op
 	}
 }
 
-async function  ifdirectoryexit(ppath:any){
+async function ifdirectoryexit(ppath: any) {
 	const pathc = new Path(ppath);
-	if(fs.existsSync(pathc.path)){
-		const ans =  await overwriteFileQuestion('This package already exists. Do you want to overwrite it?');
+	if (fs.existsSync(pathc.path)) {
+		const ans = await overwriteFileQuestion('This package already exists. Do you want to overwrite it?');
 		if (ans.overwrite) {
 			return ppath;
-		}else{
-			const newname = "new-"+pathc.toarray()[pathc.toarray().length - 1];
+		} else {
+			const newname = "new-" + pathc.toarray()[pathc.toarray().length - 1];
 			const arr = pathc.toarray();
-			  arr[pathc.toarray().length - 1] = newname;
-            return path.resolve(arr.join('/'));
+			arr[pathc.toarray().length - 1] = newname;
+			return path.resolve(arr.join('/'));
 		}
 	}
 
@@ -197,7 +209,7 @@ function getDefaultPackageName(composition: IPackageTemplate): string {
 
 export async function pack(options: IPackageOptions = {}): Promise<IPackageResult> {
 	const cwd = options.cwd || LocalPaths.CWD;
-       
+
 	const composition = await readcomposition(cwd);
 	TemplateEnviroment.typeproject = (await openValidateQuestion('templateking', 'input', 'provide category of template', new CompositionProcessor(composition).checktemplatekind)).templateking
 
@@ -221,9 +233,18 @@ export function gatherFileToCompress(composition: IPackageTemplate, options: IPa
 
 	return getTemplateFiles(cwd, options.useYarn, packagedDependencies).then(fileNames => {
 		const files = fileNames.map(f => ({ path: `template/${f}`, localPath: path.join(cwd, f) }));
-
+        TemplateEnviroment.packageStructure = getDirectoryStructure(files)
 		return processFiles(processors, files);
 	});
+}
+
+export function getDirectoryStructure(file:{
+    path: string;
+    localPath: string;}[]) {
+	const files = file.map((f)=>{
+		return new Path(f.localPath).normalize()
+	})
+	return displayDirectory(new Path(process.cwd()).normalize(),files)
 }
 
 function compressTemplate(files: IFile[], packagePath: string): Promise<void> {
@@ -236,8 +257,8 @@ function compressTemplate(files: IFile[], packagePath: string): Promise<void> {
 					files.forEach(f =>
 						ReadMeProcessor.isCached(f)
 							? zip.addBuffer(typeof f.contents === 'string' ? Buffer.from(f.contents, 'utf8') : f.contents, f.path, {
-									mode: f.mode,
-							  })
+								mode: f.mode,
+							})
 							: zip.addFile(f.localPath, f.path, { mode: f.mode })
 					);
 					zip.end();
@@ -262,7 +283,7 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 				.compact() // remove falsey values
 				.join(',');
 			const template = processors.reduce((r, p) => ({ ...r, ...p.template }), { assets, tags });
-			writeJSONSync(path.join(LocalPaths.CWD,'template.json'),template);
+			writeJSONSync(path.join(LocalPaths.CWD, 'template.json'), template);
 			return Promise.all([totemplateXML(template), toContentTypes(files)]).then(result => {
 				return [
 					{ path: 'template.xml', contents: Buffer.from(result[0], 'utf8') },
@@ -275,7 +296,7 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 }
 
 export function totemplateXML(template: any): Promise<string> {
-	const TemplateXmlPath = path.join(LocalPaths.HOMEDRIVE,LocalPaths.USERROOT,LocalPaths.TPMCONFIG,'templatete.composition');
+	const TemplateXmlPath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, 'templatete.composition');
 	return readFile(TemplateXmlPath, 'utf8')
 		.then(xmlTemplateStr => _.template(xmlTemplateStr))
 		.then(xmlTemplate => xmlTemplate(template));
@@ -287,12 +308,12 @@ const defaultExtensions = {
 };
 
 export function toContentTypes(files: IFile[]): Promise<string> {
-	const contentTypesTemplatePath = path.join(LocalPaths.HOMEDRIVE,LocalPaths.USERROOT,LocalPaths.TPMCONFIG,'[Content_Types].xml');
+	const contentTypesTemplatePath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, '[Content_Types].xml');
 	const extensions = Object.keys(_.keyBy(files, f => path.extname(f.path).toLowerCase()))
 		.filter(e => !!e)
 		.reduce((r, e) => ({ ...r, [e]: lookup(e) }), {});
 
-	const allExtensions:any = { ...extensions, ...defaultExtensions };
+	const allExtensions: any = { ...extensions, ...defaultExtensions };
 	const contentTypes = Object.keys(allExtensions).map(extension => ({
 		extension,
 		contentType: allExtensions[extension],

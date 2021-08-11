@@ -48,7 +48,7 @@ export class CompositionProcessor extends BaseProcessor {
 			githubMarkdown: composition.markdown !== 'standard',
 			dependencies: composition.dependencies,
 			devDependencies:composition.devDependencies,
-			templateKind: _.isString((this.templateComposition?.templateKind || composition.templateKind) as TemplateKind) ? this.templateComposition?.templateKind : composition.templateKind,
+			templateKind: TemplateEnviroment.typeproject ,
 
 		};
 
@@ -81,7 +81,7 @@ export class CompositionProcessor extends BaseProcessor {
 
 			if (typeof this.checktemplatekind(this.template.templateKind) != 'boolean') {
 				const answer = await openValidateQuestion('templateking', 'input', 'provide category of template', this.checktemplatekind);
-				this.template.templateKind = [answer.templateking] as TemplateKind[];
+				this.template.templateKind = answer.templateking as TemplateKind;
 			}
 
 		} else if(!this.template.templateKind) {

@@ -4,6 +4,7 @@ import _read from 'read';
 import denodeify from 'denodeify';
 import spawn from 'execa';
 import { TemplateEnviroment } from '../../base/env/template.env';
+import { execArgv } from 'node:process';
 
 
 const __read = denodeify<_read.Options, string>(_read);
@@ -61,17 +62,27 @@ export function read(prompt: string, options: _read.Options = {}): Promise<strin
 
 
 export const spawnCommand = function (command:string, args:any, opt:any) {
-	return spawn(command, args, {
+
+	return  spawn(command, args, {
 	  stdio: 'inherit',
 	  cwd: TemplateEnviroment.templateDownLoadedDestinationRoot(),
 	  ...opt
 	});
   };
 
-export const CommandAsync = (command:string,args:any,opt:any)=>{
+export const CommandAsync = (command:string,args:any,opt?:any)=>{
+	
 	return spawn.sync(command, args, {
 		stdio: 'inherit',
-		cwd: TemplateEnviroment.templateDownLoadedDestinationRoot(),
 		...opt
 	  });
 }
+
+export const  execPromise = async (command:string,args:any,opt?:any)=>{
+   
+	const output = await spawn(command,args)
+
+	return output
+}
+
+

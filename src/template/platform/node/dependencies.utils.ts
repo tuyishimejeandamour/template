@@ -1,5 +1,5 @@
 import path from "path";
-import { CommandAsync, exec } from "./node.platform";
+import { CommandAsync, exec, execPromise } from "./node.platform";
 import * as cp from 'child_process';
 import {  existsSync } from "fs-extra";
 import { showInfo } from "../log/logger.platform";
@@ -27,7 +27,8 @@ export async function DevDependencies() {
 	const cwd = LocalPaths.CWD
 	///console.log('in function'+ cwd)
 	//await  checkNPM()
-	const output = CommandAsync('npm',['list','--dev','--loglevel=error'],{ cwd, maxBuffer: 5000 * 1024 })
+	const output =  await execPromise('npm',['list','--dev','--loglevel=error'],{ cwd })
+	console.log(output)
 	 return Promise.resolve(output.stdout.split(/[\r\n]/).filter(dir => dir))
 		//.then(({ stdout }) => {console.log("tttt"+stdout); return });
 }

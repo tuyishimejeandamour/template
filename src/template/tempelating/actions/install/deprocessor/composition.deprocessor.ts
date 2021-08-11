@@ -1,5 +1,4 @@
 
-import { copyFileSync } from "fs-extra";
 import { IPackageTemplate } from "../../../../base/models/template.model";
 import { Path } from "../../../../base/utils/path";
 import { BaseDiprocessor, InstallFile } from "./base.deprocessor";

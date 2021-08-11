@@ -1,16 +1,12 @@
 import { writeJSONSync } from "fs-extra";
 import _ from "lodash";
-import { readSync } from "node:fs";
 import path from "path";
 import { LocalPaths } from "../../../../base/env/path.env";
 import { IPackageTemplate } from "../../../../base/models/template.model";
-import { yesornoQuestion } from "../../../../base/questions/choice/yesorno.question";
 import { Path } from "../../../../base/utils/path";
-import { checkTemplateName, validateVersion } from "../../../../platform/checking/template.checking";
 import { readfileExist } from "../../../../platform/files/file.platform";
-import { showInfo, showWarn } from "../../../../platform/log/logger.platform";
 import { getDevDependencies, getPeroDependencies } from "../packageService.action";
-import { BaseProcessor, Dependency, IFile } from "./base.processor";
+import { BaseProcessor, IFile } from "./base.processor";
 /**
  * this will be file which will focus on sorting nodemodules and insert theme in dev and dependences
  * on file it will load all dependencies 
