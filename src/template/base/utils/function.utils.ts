@@ -1,6 +1,6 @@
 
 import { checkNPM } from "../../platform/node/dependencies.utils"
-import { exec } from "../../platform/node/node.platform"
+import {  execinit } from "../../platform/node/node.platform"
 import { Token } from "./token.utils"
 
 export function validateTemplateName(name:string){
@@ -131,7 +131,7 @@ export const isGitHubRepository = (repository: string): boolean=> {
 
 export function getLatestVersion(name: string, cancellationToken?: Token): Promise<string> {
 	return checkNPM(cancellationToken)
-		.then(() => exec(`npm show ${name} version`, {}, cancellationToken))
+		.then(() => execinit(`npm show ${name} version`, {}, cancellationToken))
 		.then(parseStdout);
 }
 
@@ -163,4 +163,15 @@ export async function sequenceExecuteFunction(promiseFactories: { (): Promise<an
 	for (const factory of promiseFactories) {
 		await factory();
 	}
+}
+export function assign<T>(destination: T, ...sources: any[]): T {
+	for (const source of sources) {
+		Object.keys(source).forEach(key => (destination as any)[key] = source[key]);
+	}
+
+	return destination;
+}
+
+export function sanitizePath(path: string): string {
+	return path.replace(/^([a-z]):\\/i, (_, letter) => `${letter.toUpperCase()}:\\`);
 }

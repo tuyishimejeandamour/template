@@ -34,5 +34,12 @@ import util from 'util'
 
 		}
 	}
+
+	private displayTree(){
+         
+		
+
+
+	}
 	
 }

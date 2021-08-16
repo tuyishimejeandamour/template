@@ -73,7 +73,6 @@ export async function Install(temppath:string,installoption:boolean): Promise<In
 	TemplateEnviroment.packageJson = await readcomposition(cwd);
 
 	const files = await gatherFileToInstall(TemplateEnviroment.packageJson,cwd,installoption);
-	console.log(files)
 	const jsFiles = files.filter(f => /\.js$/i.test(f.to));
 
 	if (files.length > 5000 || jsFiles.length > 100) {

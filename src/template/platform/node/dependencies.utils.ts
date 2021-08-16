@@ -1,5 +1,5 @@
 import path from "path";
-import { CommandAsync, exec, execPromise } from "./node.platform";
+import { execinit, execPromise } from "./node.platform";
 import * as cp from 'child_process';
 import {  existsSync } from "fs-extra";
 import { showInfo } from "../log/logger.platform";
@@ -27,9 +27,15 @@ export async function DevDependencies() {
 	const cwd = LocalPaths.CWD
 	///console.log('in function'+ cwd)
 	//await  checkNPM()
-	const output =  await execPromise('npm',['list','--dev','--loglevel=error'],{ cwd })
-	console.log(output)
-	 return Promise.resolve(output.stdout.split(/[\r\n]/).filter(dir => dir))
+	return  execPromise('npm',['list','--dev','--loglevel=error'],{ cwd }).then((
+		output
+	)=>{
+		if (output.stdout) {
+			return Promise.resolve(output.stdout.split(/[\r\n]/).filter(dir => dir))
+		}
+		
+	})
+	
 		//.then(({ stdout }) => {console.log("tttt"+stdout); return });
 }
 
@@ -198,7 +204,7 @@ export async function detectFramework(params:string):Promise<IFrameworks> {
 
 export  async function checkNPM(cancellationToken?: Token): Promise<boolean> {
 	let isInstalled = false;
-   const output =  await exec('npm -v',{},cancellationToken)
+   const output =  await execinit('npm -v',{},cancellationToken)
 	  const version = output.stdout.trim();
 	  if (version) {
 		isInstalled = true
@@ -208,7 +214,7 @@ export  async function checkNPM(cancellationToken?: Token): Promise<boolean> {
 }
 export function checkYARN(cancellationToken?: Token): Promise<boolean> {
 let isInstalled = false;
-  exec('yarn -v', {}, cancellationToken).then(({ stdout }) => {
+ execinit('yarn -v', {}, cancellationToken).then(({ stdout }) => {
 	  const version = stdout.trim();
 
 	  if (version) {
@@ -223,7 +229,7 @@ return Promise.resolve(isInstalled);
 }
 export function checkBOWER(cancellationToken?: Token): Promise<boolean> {
 let isInstalled = false;
-  exec('bower -v', {}, cancellationToken).then(({ stdout }) => {
+ execinit('bower -v', {}, cancellationToken).then(({ stdout }) => {
 	  const version = stdout.trim();
 	  if (version) {
 		  isInstalled = true;

@@ -23,6 +23,7 @@ import { openValidateQuestion } from "../../../base/questions/open/open.question
 import { TemplateEnviroment } from "../../../base/env/template.env";
 import { displayDirectory } from "../../../platform/files/file.platform";
 import { fileSync } from "tmp";
+import { ConsoleError } from "../../../base/utils/consoleerror";
 const yazl = require('yazl');
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
@@ -157,18 +158,6 @@ export function getTemplateFiles(
 	});
 }
 
-export const getDevDependencies = async (): Promise<any> => {
-	//return Promise.resolve([{ name: 'react', version: '^17.0.2' }])
-	return DevDependencies().catch((err)=>{
-		throw new Error(err);
-		
-	});
-}
-export const getPeroDependencies = (): Promise<Dependency[]> => {
-
-	return Promise.resolve([{ name: 'react', version: '^17.0.2' }])
-}
-
 export async function getPackagePath(cwd: string, manifest: IPackageTemplate, options: IPackageOptions = {}): Promise<string> {
 	if (!options.packagePath) {
 		return ifdirectoryexit(path.join(cwd, getDefaultPackageName(manifest)));
@@ -211,7 +200,10 @@ export async function pack(options: IPackageOptions = {}): Promise<IPackageResul
 	const cwd = options.cwd || LocalPaths.CWD;
 
 	const composition = await readcomposition(cwd);
-	TemplateEnviroment.typeproject = (await openValidateQuestion('templateking', 'input', 'provide category of template', new CompositionProcessor(composition).checktemplatekind)).templateking
+	if (!TemplateEnviroment.typeproject) {
+		TemplateEnviroment.typeproject = (await openValidateQuestion('templateking', 'input', 'provide category of template', new CompositionProcessor(composition).checktemplatekind)).templateking
+
+	}
 
 	const files = await gatherFileToCompress(composition, options);
 	const jsFiles = files.filter(f => /\.js$/i.test(f.path));
@@ -222,6 +214,8 @@ export async function pack(options: IPackageOptions = {}): Promise<IPackageResul
 	}
 
 	const packagePath = await getPackagePath(cwd, composition, options);
+	TemplateEnviroment.packageStructure = getDirectoryStructure(files)
+
 	await compressTemplate(files, path.resolve(packagePath));
 
 	return { composition, packagePath, files };
@@ -233,18 +227,15 @@ export function gatherFileToCompress(composition: IPackageTemplate, options: IPa
 
 	return getTemplateFiles(cwd, options.useYarn, packagedDependencies).then(fileNames => {
 		const files = fileNames.map(f => ({ path: `template/${f}`, localPath: path.join(cwd, f) }));
-        TemplateEnviroment.packageStructure = getDirectoryStructure(files)
 		return processFiles(processors, files);
 	});
 }
 
-export function getDirectoryStructure(file:{
-    path: string;
-    localPath: string;}[]) {
-	const files = file.map((f)=>{
+export function getDirectoryStructure(file:any) {
+	const files = file.map((f:any) => {
 		return new Path(f.localPath).normalize()
 	})
-	return displayDirectory(new Path(process.cwd()).normalize(),files)
+	return displayDirectory(new Path(process.cwd()).normalize(), files)
 }
 
 function compressTemplate(files: IFile[], packagePath: string): Promise<void> {

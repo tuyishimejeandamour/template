@@ -14,8 +14,6 @@ export interface IPackageTemplate {
 	framework: { version:string,name:string };
 	// template
 	publisher: string;
-	templateDependencies: string[];
-    templateDevDependencies:string[];
 	templateKind:  TemplateKind;
 
 	// optional (npm)
