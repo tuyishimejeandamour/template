@@ -20,7 +20,7 @@ const readFile = denodeify<string, string, string>(fs.readFile);
 const MinimatchOptions: minimatch.IOptions = { dot: true };
 
 export async function readcomposition(cwd:string): Promise<IPackageTemplate> {
-	const manifestPath = path.join(cwd, 'template.json');
+	const manifestPath = path.join(cwd,'template', 'template.json');
 
 	const manifest = readFile(manifestPath, 'utf8')
 		.catch(() => Promise.reject(`Extension manifest not found: ${manifestPath}`))
@@ -101,5 +101,4 @@ export async function processTemplate(processors: IDeProcessor[], files: Install
 		});
 	});
 }
-
 

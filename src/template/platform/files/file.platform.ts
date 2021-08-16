@@ -68,20 +68,20 @@ export const templatePath = (...dest: any) => {
     let filepath = path.join.apply(path, dest);
 
     if (!path.isAbsolute(filepath)) {
-        filepath = path.join(TemplateEnviroment.templateDownLoadedSourceRoot(), filepath);
+        filepath = path.join(TemplateEnviroment.templateDownLoadedSourceRoot().path, filepath);
     }
 
-    return filepath;
+    return new Path(filepath);
 }
 
 export const destinationPath = (...dest: any) => {
     let filepath = path.join.apply(path, dest);
 
     if (!path.isAbsolute(filepath)) {
-        filepath = path.join(TemplateEnviroment.templateDownLoadedDestinationRoot(), filepath);
+        filepath = path.join(TemplateEnviroment.templateDownLoadedDestinationRoot().path, filepath);
     }
 
-    return filepath;
+    return new Path(filepath);
 }
 
 const checkparent = (fil: string) => {

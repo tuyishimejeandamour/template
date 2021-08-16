@@ -4,6 +4,7 @@ import path from 'path'
 import { Objectequals } from '../../platform/checking/types.checking';
 import { load } from '../../platform/store/publisherstoreService';
 import { IFrameworks, ITemplateConfigSettings, Publisher, Settings } from '../models/store.model';
+import { Path } from '../utils/path';
 import { LocalPaths } from './path.env'
 
 export enum TPMGLOBALS {
@@ -29,8 +30,8 @@ export class TemplateEnviroment implements ITemplateConfigSettings {
     declare static _settingPath: string;
     private static local_settings: Settings;
     private static _currentpublisher: Publisher;
-    private static _sourceRoot:string;
-    private static _destinationRoot:string;
+    private static _sourceRoot:Path;
+    private static _destinationRoot:Path;
     declare static packageJson:any;
     declare static typeproject:string;
     declare static packageStructure:any;
@@ -61,10 +62,10 @@ export class TemplateEnviroment implements ITemplateConfigSettings {
     }
     
     
-    public static set sourceRoot(v : string) {
+    public static set sourceRoot(v : Path) {
         this._sourceRoot = v;
     }
-    public static get sourceRoot():string {
+    public static get sourceRoot():Path {
        return this._sourceRoot;
     }
     
@@ -97,23 +98,23 @@ export class TemplateEnviroment implements ITemplateConfigSettings {
 
     static templateDownLoadedSourceRoot(sourcePath?:any){
         if (typeof sourcePath === 'string') {
-            this.sourceRoot = path.resolve(sourcePath);
+            this.sourceRoot = new Path(path.resolve(sourcePath));
           }
       
           return this.sourceRoot;
     }
 
-    static templateDownLoadedDestinationRoot(rootPath?:any){
-        if (typeof rootPath === 'string') {
-            TemplateEnviroment._destinationRoot = path.resolve(rootPath);
+    static templateDownLoadedDestinationRoot(rootPath?:Path){
+        if (typeof rootPath?.path === 'string') {
+            TemplateEnviroment._destinationRoot = new Path(path.resolve(rootPath.path));
       
-            if (!fs.existsSync(TemplateEnviroment._destinationRoot)) {
-              fs.mkdirSync(TemplateEnviroment._destinationRoot, {recursive: true});
+            if (!fs.existsSync(TemplateEnviroment._destinationRoot.path)) {
+              fs.mkdirSync(TemplateEnviroment._destinationRoot.path, {recursive: true});
             }
       
           }
       
-          return TemplateEnviroment._destinationRoot || LocalPaths.CWD ;
+          return TemplateEnviroment._destinationRoot || new Path(LocalPaths.CWD) ;
     }
 
 }

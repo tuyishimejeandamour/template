@@ -22,18 +22,18 @@ export const showTitleAndBanner = (val:boolean = false): void => {
 }
 
 export const showError = (message: string | Error): void => {
-    console.error(red(ConsoleMessage.ERROR) + message);
+    console.error(red(`🛑`+ConsoleMessage.ERROR) + message);
 }
 
 export const showSuccess = (message: string): void => {
-    console.log(green(ConsoleMessage.SUCCESS) + message + newLine);
+    console.info(green(`✔︎`+ConsoleMessage.SUCCESS) + message + newLine);
 }
 
 export const showInfo = (message: string): void => {
     console.info(cyan(ConsoleMessage.INFO) + message + newLine);
 }
 export const showWarn = (message: string): void => {
-    console.info(yellow(ConsoleMessage.INFO) + message + newLine);
+    console.warn(yellow(`⚠️`+ConsoleMessage.INFO) + message + newLine);
 }
 
 export const showGenerate = (fileName: string): void => {

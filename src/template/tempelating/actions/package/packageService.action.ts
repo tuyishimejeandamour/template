@@ -3,10 +3,10 @@ import path from "path";
 import { IPackageTemplate } from "../../../base/models/template.model";
 import * as fs from 'fs-extra';
 import { cloneDeepWith } from "lodash";
-import { Dependency, IFile, IPackageOptions, IPackageResult, IProcessor, ITranslations } from "./processor/base.processor";
+import {  IFile, IPackageOptions, IPackageResult, IProcessor, ITranslations } from "./processor/base.processor";
 import minimatch from "minimatch";
 import { defaultignorefileandfolder, notIgnored } from "../../../base/models/ignore.model";
-import { DevDependencies, getDependencies } from "../../../platform/node/dependencies.utils";
+import { getDependencies } from "../../../platform/node/dependencies.utils";
 const glob = require('glob');
 import * as _glob from "glob";
 import { CompositionProcessor } from "./processor/composition.processor";
@@ -22,8 +22,7 @@ import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/fun
 import { openValidateQuestion } from "../../../base/questions/open/open.question";
 import { TemplateEnviroment } from "../../../base/env/template.env";
 import { displayDirectory } from "../../../platform/files/file.platform";
-import { fileSync } from "tmp";
-import { ConsoleError } from "../../../base/utils/consoleerror";
+
 const yazl = require('yazl');
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
