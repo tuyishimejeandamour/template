@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PackageManifest Version="1.0.0" xmlns="http://schemas.template.io/template/template-schema/v1" xmlns:d="http://schemas.template.io/template/template-schema/v1">
+  <Metadata>
+    <User  Email="<%- id %>" Publisher="<%- id %>"  />
+    <DisplayName><%- displayName %></DisplayName>
+    <Description xml:space="preserve"><%- description %></Description>
+    <Tags><%- tags %></Tags>
+    <Version><% - version %></Version>
+    <Categories><%- categories %></Categories>
+    <GalleryFlags><%- flags %></GalleryFlags>
+    <FrameWork Name ="<%- framework.name %>" Version = "<%- framework.version %>"></FrameWork>
+    <Properties>
+      <Property Id="console.templateKind" Value="<%- templateKind %>" />
+      <% if (links.repository) { %>
+        <Property Id="console.Links.Source" Value="<%- links.repository %>" />
+        <Property Id="console.Links.Getstarted" Value="<%- links.repository %>" />       
+      <% } %>
+      <% if (links.bugs) { %><Property Id="console.issue" Value="<%- links.bugs %>" /><% } %>
+      <% if (links.homepage) { %><Property Id="console.Learn" Value="<%- links.homepage %>" /><% } %>
+      <Property Id="console.markedown.type" Value="<%- githubMarkdown %>" />
+    </Properties>
+  </Metadata>
+  <Dependency/>
+  <DevDependencies>
+   <% _.forEach(devDependencies, function (dependency) { %><DevDependency ID="console.devdependency" Value="<%- dependency %>"/><% }); %>
+  </DevDependencies>
+  <ProDependencies>
+   <% _.forEach(dependencies, function (dependency) { %><ProDependency ID="console.prodependency" Value="<%- dependency %>"/><% }); %>
+  </ProDependencies>
+  </Dependency>
+  <Assets>
+    <% _.forEach(assets, function (asset) { %><Asset Type="<%- asset.name %>" Path="<%- asset.path %>" Addressable="true" /><% }); %>
+  </Assets>
+</PackageManifest>

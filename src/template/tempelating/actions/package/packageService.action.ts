@@ -214,7 +214,6 @@ export async function pack(options: IPackageOptions = {}): Promise<IPackageResul
 	}
 
 	const packagePath = await getPackagePath(cwd, composition, options);
-	TemplateEnviroment.packageStructure = getDirectoryStructure(files)
 
 	await compressTemplate(files, path.resolve(packagePath));
 
@@ -227,6 +226,7 @@ export function gatherFileToCompress(composition: IPackageTemplate, options: IPa
 
 	return getTemplateFiles(cwd, options.useYarn, packagedDependencies).then(fileNames => {
 		const files = fileNames.map(f => ({ path: `template/${f}`, localPath: path.join(cwd, f) }));
+		TemplateEnviroment.packageStructure = getDirectoryStructure(files)
 		return processFiles(processors, files);
 	});
 }
@@ -287,7 +287,7 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 }
 
 export function totemplateXML(template: any): Promise<string> {
-	const TemplateXmlPath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, 'templatete.composition');
+	const TemplateXmlPath = path.join(__dirname,'../../../../../resources/templatete.composition');
 	return readFile(TemplateXmlPath, 'utf8')
 		.then(xmlTemplateStr => _.template(xmlTemplateStr))
 		.then(xmlTemplate => xmlTemplate(template));
@@ -299,7 +299,7 @@ const defaultExtensions = {
 };
 
 export function toContentTypes(files: IFile[]): Promise<string> {
-	const contentTypesTemplatePath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, '[Content_Types].xml');
+	const contentTypesTemplatePath =  path.join(__dirname,'../../../../../resources/[Content_Types].xml');
 	const extensions = Object.keys(_.keyBy(files, f => path.extname(f.path).toLowerCase()))
 		.filter(e => !!e)
 		.reduce((r, e) => ({ ...r, [e]: lookup(e) }), {});

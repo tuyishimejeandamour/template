@@ -52,11 +52,6 @@ export class CompositionProcessor extends BaseProcessor {
 
 		};
 
-       console.log("hello")
-
-
-
-
 		if (isGitHub) {
 			this.template.links.github = repository;
 		}
