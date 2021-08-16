@@ -9,6 +9,7 @@
   "bin": {
     "template": "bin/template"
   },
+  "private":true,
   "keywords": [
     "cli",
     "tpm",

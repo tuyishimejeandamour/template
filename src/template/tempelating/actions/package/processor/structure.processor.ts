@@ -38,10 +38,9 @@ import { showInfo } from "../../../../platform/log/logger.platform";
 		}
 		if (TemplateEnviroment.packageStructure) {
 			
-
 			this.template = {
 				...this.templateComposition,
-				templatestructure:this.templateComposition
+				templatestructure:TemplateEnviroment.packageStructure
 			}
 			
 			writeJSONSync(path.join(LocalPaths.CWD, 'template.json'), this.template)

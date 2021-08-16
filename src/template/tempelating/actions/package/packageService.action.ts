@@ -15,7 +15,7 @@ import { createDefaultProcessors } from "../../../base/loaders/instantiation.loa
 import { lookup } from "mime";
 import { ReadMeProcessor } from "./processor/markdown.processor";
 import { LocalPaths } from "../../../base/env/path.env";
-import { writeJSONSync } from "fs-extra";
+import { readFileSync, writeJSONSync } from "fs-extra";
 import { overwriteFileQuestion } from "../../../base/questions/choice/fileExist.question";
 import { Path } from "../../../base/utils/path";
 import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/function.utils";
@@ -278,6 +278,7 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 			return Promise.all([totemplateXML(template), toContentTypes(files)]).then(result => {
 				return [
 					{ path: 'template.xml', contents: Buffer.from(result[0], 'utf8') },
+					{ path: 'template/template.json',contents:readFileSync(path.join(LocalPaths.CWD, 'template.json'))},
 					{ path: 'FIle_Types.xml', contents: Buffer.from(result[1], 'utf8') },
 					...files,
 				];
