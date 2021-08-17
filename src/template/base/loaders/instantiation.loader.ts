@@ -1,5 +1,6 @@
 import { IDeProcessor } from "../../tempelating/actions/install/deprocessor/base.deprocessor";
 import { CompositionDeprocessor } from "../../tempelating/actions/install/deprocessor/composition.deprocessor";
+import { StructureDeprocessor } from "../../tempelating/actions/install/deprocessor/structure.deprocessor";
 import { IPackageOptions, IProcessor } from "../../tempelating/actions/package/processor/base.processor";
 import { CompositionProcessor } from "../../tempelating/actions/package/processor/composition.processor";
 import { ReadMeProcessor } from "../../tempelating/actions/package/processor/markdown.processor";
@@ -18,6 +19,7 @@ export function createDefaultProcessors(composition: IPackageTemplate, options: 
 export function createDefaultDeProcessors(composition:IPackageTemplate,path:string,opt?:boolean):IDeProcessor[]{
 
 	return[
-		new CompositionDeprocessor(composition,path)
+		new CompositionDeprocessor(composition,path),
+		new StructureDeprocessor(composition,path)
 	]
 }

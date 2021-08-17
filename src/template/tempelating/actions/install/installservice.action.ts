@@ -54,7 +54,7 @@ export function getTemplateFiles(
 		files = files.filter(f => !/\r$/m.test(f));
 
 		return (
-			     Promise.all(['template.json','README.md'])
+			     Promise.all(['template.json'])
 				// Filter out files
 				.then((file) =>
 					files.filter(
@@ -73,14 +73,14 @@ export async function Install(temppath:string,installoption:boolean): Promise<In
 	TemplateEnviroment.packageJson = await readcomposition(cwd);
 
 	const files = await gatherFileToInstall(TemplateEnviroment.packageJson,cwd,installoption);
-	const jsFiles = files.filter(f => /\.js$/i.test(f.to));
+	const jsFiles = files.filter(f => /\.js$/i.test(f.from));
 
 	if (files.length > 5000 || jsFiles.length > 100) {
 		console.log(
 			`This extension consists of ${files.length} files, out of which ${jsFiles.length} are JavaScript files. For performance reasons, you should bundle your extension: https://aka.ms/vscode-bundle-extension . You should also exclude unnecessary files by adding them to your .vscodeignore: https://aka.ms/vscode-vscodeignore`
 		);                
 	}
-
+   
 	return  files ;
 }
 export function gatherFileToInstall(composition: IPackageTemplate,temppath:string,installopt?:boolean): Promise<InstallFile[]> {

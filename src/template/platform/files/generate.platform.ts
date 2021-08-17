@@ -1,28 +1,26 @@
 import assert from "assert";
 
-import  { existsSync, readdirSync, readFileSync, statSync, writeFile} from 'fs-extra'
+import  { createFileSync, existsSync, readdirSync, readFileSync, statSync, writeFile, writeFileSync} from 'fs-extra'
 import path from "path";
 import { Path } from "../../base/utils/path";
 
 export interface IFileTemplateGenerator {
-    copyTpl: (from: Path, to: Path, opt: any) => void;
+    copyTpl: (from: Path, to: Path, opt?: any) => void;
     copy: (from: Path, to: Path, opt: any) => void;
     _copySingle: (to: Path, from:Path, content: any, opt: any) => void;
-    writeFile: (to: Path, content: any) => boolean;
+    writeFile: (to: Path, content: any) => void;
 }
 
 
 export class FileTemplateGenerator implements IFileTemplateGenerator {
-    private destination: Path
-    private root: Path
-    constructor(destination: Path, root: Path) {
-        this.destination = destination;
-        this.root = root;
-    }
+    
 
-    copyTpl(from: Path, to: Path, opt: any){
-
-        this._copySingle(to,from,opt)
+    copyTpl(from: Path, to: Path, opt?: any){
+        
+        if(!existsSync(to.path)){
+          createFileSync(to.path)
+        }
+        this._copySingle(to,from)
         
     };
     copy(from: Path, to: Path, opt: any) {
@@ -45,26 +43,22 @@ export class FileTemplateGenerator implements IFileTemplateGenerator {
             filecontent = content
         }
 
-        if (opt.process) {
-          if (from) {
-              
-              filecontent = this.applyProcessingFunc(opt.process, filecontent, from.path);
-          }
+        if (opt) {
+           
+            if (opt.process) {
+                
+                if (from) {
+                    
+                    filecontent = this.applyProcessingFunc(opt.process, filecontent, from.path);
+                }
+            }
         }
       
        this.writeFile(to,filecontent)
     };
-    writeFile(to: Path, content: any): boolean {
-
-        writeFile(to.path, content, (err) => {
-
-            if (err) {
-                throw new Error(err.message);
-
-            }
-
-        })
-        return true
+    writeFile(to: Path, content: any):void {
+        writeFileSync(to.path,content)
+        
 
     };
 
