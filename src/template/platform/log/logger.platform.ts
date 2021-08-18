@@ -2,6 +2,7 @@ import { red, green, cyan, yellow, blue } from 'kleur';
 import * as figlet from 'figlet';
 import { ConsoleMessage } from '../../base/models/message.model';
 import { TemplateEnviroment } from '../../base/env/template.env';
+import { clear, log } from 'node:console';
 
 
 const newLine = '\n';
@@ -22,18 +23,18 @@ export const showTitleAndBanner = (val:boolean = false): void => {
 }
 
 export const showError = (message: string | Error): void => {
-    console.error(red(`🛑`+ConsoleMessage.ERROR) + message);
+    console.error(red(`🛑 `+ConsoleMessage.ERROR) + message);
 }
 
 export const showSuccess = (message: string): void => {
-    console.info(green(`✔︎`+ConsoleMessage.SUCCESS) + message + newLine);
+    console.info(green(`✔︎ `+ConsoleMessage.SUCCESS) + message + newLine);
 }
 
 export const showInfo = (message: string): void => {
-    console.info(cyan(ConsoleMessage.INFO) + message + newLine);
+    console.info(cyan( `ℹ`+ConsoleMessage.INFO) + message + newLine);
 }
 export const showWarn = (message: string): void => {
-    console.warn(yellow(`⚠️`+ConsoleMessage.INFO) + message + newLine);
+    console.warn(yellow(`⚠️ `+ConsoleMessage.INFO) + message + newLine);
 }
 
 export const showGenerate = (fileName: string): void => {
@@ -44,6 +45,11 @@ export const showCreate = (fileName: string, filePath: string): void => {
     filePath
     ? console.log(green(ConsoleMessage.CREATE) + `${fileName} in ${filePath}`)
     : console.log(green(ConsoleMessage.CREATE) + `${fileName}`);
+}
+
+export const creatingFile = (message:string)=>{
+    console.info(cyan( `⚡ `+message ));
+
 }
 
 export const showUpdate = (fileName: string, filePath: string): void => {

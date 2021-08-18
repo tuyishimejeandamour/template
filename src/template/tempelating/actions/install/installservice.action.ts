@@ -14,13 +14,19 @@ import { IDeProcessor, InstallFile } from "./deprocessor/base.deprocessor";
 import { LocalPaths } from "../../../base/env/path.env";
 import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/function.utils";
 import { TemplateEnviroment } from "../../../base/env/template.env";
-
+import { Path } from "../../../base/utils/path";
+import cp from 'child_process'
+const rimfs = require('../../../.././../resources/rim');
+const exec = denodeify<string, { cwd?: string; env?: any }, { stdout: string; stderr: string }>(
+	cp.exec as any,
+	(err, stdout, stderr) => [err, { stdout, stderr }]
+);
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
 const MinimatchOptions: minimatch.IOptions = { dot: true };
 
 export async function readcomposition(cwd:string): Promise<IPackageTemplate> {
-	const manifestPath = path.join(cwd,'template', 'template.json');
+	const manifestPath = path.join(cwd, 'template.json');
 
 	const manifest = readFile(manifestPath, 'utf8')
 		.catch(() => Promise.reject(`Extension manifest not found: ${manifestPath}`))
@@ -102,3 +108,18 @@ export async function processTemplate(processors: IDeProcessor[], files: Install
 	});
 }
 
+export async function cleanDownloadCachedDirectory(path:string[]){
+	
+    if (path.length >0) {
+	path.forEach((pa)=>{
+		rimfs(pa, fs, (er: any)=>{
+			if (er)
+			throw er
+		})
+	})
+		
+	}else{
+    return
+	}
+   
+}

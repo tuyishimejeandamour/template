@@ -1,7 +1,9 @@
 
+import { LocalPaths } from "../../../../base/env/path.env";
 import { IPackageTemplate } from "../../../../base/models/template.model";
 import { Path } from "../../../../base/utils/path";
 import { FileTemplateGenerator } from "../../../../platform/files/generate.platform";
+import { creatingFile, showInfo } from "../../../../platform/log/logger.platform";
 import { BaseDiprocessor, InstallFile } from "./base.deprocessor";
 
 
@@ -45,10 +47,15 @@ export class StructureDeprocessor extends BaseDiprocessor {
          const generator = new FileTemplateGenerator();
 
         if (this.composition.templateKind == 'starter') {
-            console.log(this.files)
+            
+            console.group('starting generating filels');
             this.files.forEach(file => {
                 generator.copyTpl(new Path(file.from),new Path(file.to))
+                // console.groupCollapsed('creating....  '+file.to.replace(LocalPaths.CWD,''))
+                creatingFile
+                ('creating....  '+file.to.replace(LocalPaths.CWD,''));
             });
+            console.groupEnd();
         }
         return Promise.resolve()
     }
