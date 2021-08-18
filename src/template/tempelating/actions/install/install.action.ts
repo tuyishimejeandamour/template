@@ -13,5 +13,5 @@ export const install = async (templatePackage:string,skip:boolean):Promise<any>=
     TemplateEnviroment.packageuse = await choosePackage()
     const name = await Install(tempPath,skip)
     showSuccess(`successed to install ${name.length} from package `)
-    await cleanDownloadCachedDirectory(tempPath)
+    await cleanDownloadCachedDirectory([tempPath])
 }

@@ -16,6 +16,7 @@ import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/fun
 import { TemplateEnviroment } from "../../../base/env/template.env";
 import { Path } from "../../../base/utils/path";
 import cp from 'child_process'
+import { existsSync, unlinkSync } from "fs-extra";
 const rimfs = require('../../../.././../resources/rim');
 const exec = denodeify<string, { cwd?: string; env?: any }, { stdout: string; stderr: string }>(
 	cp.exec as any,
@@ -108,14 +109,24 @@ export async function processTemplate(processors: IDeProcessor[], files: Install
 	});
 }
 
-export async function cleanDownloadCachedDirectory(path:string[]){
+export async function cleanDownloadCachedDirectory(downloadpath:string[]){
 	
-    if (path.length >0) {
-	path.forEach((pa)=>{
-		rimfs(pa, fs, (er: any)=>{
+    if (downloadpath.length >0) {
+	downloadpath.forEach((pa)=>{
+		const pas = new Path(pa).normalize();
+		const pasarray = pas.split('/');
+		const arr1 = pasarray.slice(0,pasarray.length-1);
+		//delete extracted folder
+		rimfs(arr1.join('/'), fs, (er: any)=>{
 			if (er)
 			throw er
 		})
+        //delete downloaded file compressed
+		const file = path.join(pasarray.slice(0,pasarray.length-2).join('/'),arr1.pop() as string+'.template');
+		console.log(file)
+		if (existsSync(file)) {
+			unlinkSync(file)
+		}
 	})
 		
 	}else{
