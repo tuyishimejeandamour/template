@@ -7,8 +7,8 @@ import { Path } from "../../base/utils/path";
 export interface IFileTemplateGenerator {
     copyTpl: (from: Path, to: Path, opt?: any) => void;
     copy: (from: Path, to: Path, opt: any) => void;
+    write:(to:Path,content:string | Buffer)=>void;
     _copySingle: (to: Path, from:Path, content: any, opt: any) => void;
-    writeFile: (to: Path, content: any) => void;
 }
 
 
@@ -33,6 +33,11 @@ export class FileTemplateGenerator implements IFileTemplateGenerator {
             this._copySingle(to,from,opt)
         )
     };
+
+   write(to:Path,content:string | Buffer){
+
+    this._copySingle(to,undefined,content)
+   }
     _copySingle(to: Path, from?:Path, content?: any, opt?: any): void {
         let filecontent;
         if (from) {
@@ -56,13 +61,16 @@ export class FileTemplateGenerator implements IFileTemplateGenerator {
       
        this.writeFile(to,filecontent)
     };
-    writeFile(to: Path, content: any):void {
+    private writeFile(to: Path, content: any):void {
+
+        if (content) {
+            assert(content,"seems that there is no content but we will create file")
+        }
         writeFileSync(to.path,content)
         
-
     };
 
-    applyProcessingFunc(process: (arg0: any, arg1: any) => any, contents: any, filename: any) {
+    private applyProcessingFunc(process: (arg0: any, arg1: any) => any, contents: any, filename: any) {
         var output = process(contents, filename);
         return Buffer.isBuffer(output) ? output : Buffer.from(output);
       }

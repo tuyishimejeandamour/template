@@ -24,6 +24,11 @@ export class DependenciesDeprocessor extends BaseDiprocessor {
 
     onprocess(): Promise<void> {
         
+        if (
+            this.skipInstall
+        ) {
+        return Promise.resolve()  
+        }
 
         return Promise.resolve()
     }

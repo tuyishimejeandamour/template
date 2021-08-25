@@ -1,4 +1,30 @@
-import { PulginType } from "../../tempelating/pluginManagement/plugin";
+/**
+ * This is the place for API experiments and proposals.
+ * distribution and CANNOT be used in published extensions.
+ *
+ * - Copy this file to your project.
+ */
+
+declare module 'template' {
+
+    /**
+	 * The version of the template editor.
+	 */
+  export const version:string;
+
+  export interface InstallFile{
+    category?:string,
+    from:string,
+    to:string,
+    readonly contents?:Buffer | string
+}
+
+  export interface IDeProcessor{
+    path:string,
+    composition:IPackageTemplate
+    onInit:(file:InstallFile)=>Promise<InstallFile>
+    onprocess:()=>Promise<void>
+}
 
 export interface TemplateUser {
 	name: string;
@@ -8,7 +34,6 @@ export interface TemplateUser {
 
 export type TemplateKind = 'starter' | 'component' | 'page' | 'layout' | 'tool';
 
-
 export interface IPackageTemplate {
 	// mandatory (npm)
 	name: string;
@@ -17,7 +42,6 @@ export interface IPackageTemplate {
 	// template
 	publisher: string;
 	templateKind:  TemplateKind;
-	extensionKind: PulginType;
 
 	// optional (npm)
 	author?: string | TemplateUser;
@@ -39,8 +63,4 @@ export interface IPackageTemplate {
 
 }
 
-export enum PackageTools{
-	NPM   = 'npm install',
-	YARN  = 'yarn add',
-	BOWER = 'bower install'
 }

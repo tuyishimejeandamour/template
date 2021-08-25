@@ -12,7 +12,7 @@ const pkg = require('../package.json')
 export function index() {
   const _args = process.argv;
   new TemplateEnviroment();
-  
+
   program.version(pkg.version).usage('<command> [options]');
 
   program
@@ -26,50 +26,50 @@ export function index() {
       (val, all) => all ? all.concat(val) : val,
       undefined
     )
-    .action(({ yarn, packagedDependencies}) =>
+    .action(({ yarn, packagedDependencies }) =>
       TEMPLATE(toBePublished(undefined, yarn, packagedDependencies))
     );
-    program
-		.command('package [<version>]')
-		.description('Packages an template')
-		.option('--o, --out [path]', 'Output packed template file to [path] location (defaults to <name>-<version>.template)')
-		.action(
-			(
-				version,
-				{
-					out
-				}
-			) =>
-				TEMPLATE(
-					packTemplate({
-						packagePath: out,
-						version
-					})
-				)
-		);
-    
-    program
-		.command('login <publisher>')
-		.description('login to in order to publish to cloud')
-		.action((name) => TEMPLATE(loginPublisher(name)));
-    
-    program
+  program
+    .command('package [<version>]')
+    .description('Packages an template')
+    .option('--o, --out [path]', 'Output packed template file to [path] location ↔ defaults to <name>-<version>.template')
+    .action(
+      (
+        version,
+        {
+          out
+        }
+      ) =>
+        TEMPLATE(
+          packTemplate({
+            packagePath: out,
+            version
+          })
+        )
+    );
+
+  program
+    .command('login <publisher>')
+    .description('login to in order to publish to cloud')
+    .action((name) => TEMPLATE(loginPublisher(name)));
+
+  program
     .command('drag <package>')
     .description('install package')
     .option('--s, --skip', 'skip installation of dependencies and devdependencies')
-    .action((templatePackage,{skip})=>TEMPLATE(install(templatePackage,skip)))
-	// program
-	// 	.command('logout <publisher>')
-	// 	.description('Remove a publisher from the known publishers list')
-	// 	.action(name => TEMPLATE(logoutPublisher(name)));
+    .action((templatePackage, { skip }) => TEMPLATE(install(templatePackage, skip)))
+  // program
+  // 	.command('logout <publisher>')
+  // 	.description('Remove a publisher from the known publishers list')
+  // 	.action(name => TEMPLATE(logoutPublisher(name)));
 
   program.on('command:*', ([cmd]: string) => {
-    
+
     program.outputHelp(help => {
       const availableCommands = program.commands.map(c => c._name);
       const suggestion = availableCommands.find(c => leven(c, cmd) < c.length * 0.4);
       help = `${help}
-${red('Unknown command')} '${cmd}'`;
+              ${red('Unknown command')} '${cmd}'`;
 
       return suggestion ? `${help}, did you mean '${yellow(suggestion)}'?\n` : `${help}.\n`;
     });
@@ -79,8 +79,8 @@ ${red('Unknown command')} '${cmd}'`;
 };
 
 
-process.on('beforeExit',()=>{
-  console.log("thank you for using template");
+process.on('beforeExit', () => {
+  console.log('⭐ ' + "thank you for using template");
 })
 index();
 

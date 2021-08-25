@@ -65,6 +65,9 @@ export class Path {
       return path.join(this.path,joinpaths);
     }
     normalize(): string {
-        return this._path.replace(/\\/g, '/');
+        if(this.isWindowsPath){
+            return this._path.replace(/\\/g, '/');
+        }
+        return this._path
     }
   }

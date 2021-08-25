@@ -51,7 +51,6 @@ export class StructureDeprocessor extends BaseDiprocessor {
             console.group('starting generating filels');
             this.files.forEach(file => {
                 generator.copyTpl(new Path(file.from),new Path(file.to))
-                // console.groupCollapsed('creating....  '+file.to.replace(LocalPaths.CWD,''))
                 creatingFile
                 ('creating....  '+file.to.replace(LocalPaths.CWD,''));
             });
@@ -59,4 +58,5 @@ export class StructureDeprocessor extends BaseDiprocessor {
         }
         return Promise.resolve()
     }
+    
 }

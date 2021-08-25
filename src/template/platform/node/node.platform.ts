@@ -9,6 +9,10 @@ import { assign, sanitizePath } from '../../base/utils/function.utils';
 import { LocalPaths } from '../../base/env/path.env';
 import { ConsoleError } from '../../base/utils/consoleerror';
 
+export const platformexec = denodeify<string, { cwd?: string; env?: any }, { stdout: string; stderr: string }>(
+	cp.exec as any,
+	(err, stdout, stderr) => [err, { stdout, stderr }]
+);
 
 const __read = denodeify<_read.Options, string>(_read);
 interface IOptions {

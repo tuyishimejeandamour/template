@@ -1,7 +1,5 @@
-
-
-
 import denodeify from "denodeify";
+import * as Template from 'template'
 import path from "path";
 import { IPackageTemplate } from "../../../base/models/template.model";
 import * as fs from 'fs-extra';
@@ -10,23 +8,18 @@ const glob = require('glob');
 import * as _glob from "glob";
 import _ from "lodash";
 import { createDefaultDeProcessors } from "../../../base/loaders/instantiation.loader";
-import { IDeProcessor, InstallFile } from "./deprocessor/base.deprocessor";
 import { LocalPaths } from "../../../base/env/path.env";
 import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/function.utils";
 import { TemplateEnviroment } from "../../../base/env/template.env";
 import { Path } from "../../../base/utils/path";
-import cp from 'child_process'
 import { existsSync, unlinkSync } from "fs-extra";
 const rimfs = require('../../../.././../resources/rim');
-const exec = denodeify<string, { cwd?: string; env?: any }, { stdout: string; stderr: string }>(
-	cp.exec as any,
-	(err, stdout, stderr) => [err, { stdout, stderr }]
-);
+
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
 const MinimatchOptions: minimatch.IOptions = { dot: true };
 
-export async function readcomposition(cwd:string): Promise<IPackageTemplate> {
+export async function readcomposition(cwd:string): Promise<Template.IPackageTemplate> {
 	const manifestPath = path.join(cwd, 'template.json');
 
 	const manifest = readFile(manifestPath, 'utf8')
@@ -74,7 +67,7 @@ export function getTemplateFiles(
 }
 
 
-export async function Install(temppath:string,installoption:boolean): Promise<InstallFile[]> {
+export async function Install(temppath:string,installoption:boolean): Promise<Template.InstallFile[]> {
 	const cwd = temppath;
 
 	TemplateEnviroment.packageJson = await readcomposition(cwd);
@@ -90,7 +83,7 @@ export async function Install(temppath:string,installoption:boolean): Promise<In
    
 	return  files ;
 }
-export function gatherFileToInstall(composition: IPackageTemplate,temppath:string,installopt?:boolean): Promise<InstallFile[]> {
+export function gatherFileToInstall(composition: Template.IPackageTemplate,temppath:string,installopt?:boolean): Promise<Template.InstallFile[]> {
 	const cwd =  temppath;
 	
 	const processors = createDefaultDeProcessors(composition,cwd,installopt);
@@ -100,7 +93,7 @@ export function gatherFileToInstall(composition: IPackageTemplate,temppath:strin
 	});
 }
 
-export async function processTemplate(processors: IDeProcessor[], files: InstallFile[]): Promise<InstallFile[]> {
+export async function processTemplate(processors: Template.IDeProcessor[], files: Template.InstallFile[]): Promise<Template.InstallFile[]> {
 	const processedFiles = files.map(file => chain(file, processors, (file, processor) => processor.onInit(file)));
 	return Promise.all(processedFiles).then(files => {
 		return sequenceExecuteFunction(processors.map(p => () => p.onprocess())).then(() => {

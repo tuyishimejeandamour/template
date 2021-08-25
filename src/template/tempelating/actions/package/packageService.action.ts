@@ -136,6 +136,7 @@ export function getTemplateFiles(
 					if (TemplateEnviroment.typeproject == "starter") {
 						return [...['**/.git/**'], ...ignore, ...notIgnored]
 					}
+
 					return [...defaultignorefileandfolder, ...ignore, ...notIgnored]
 
 				}
@@ -201,7 +202,6 @@ export async function pack(options: IPackageOptions = {}): Promise<IPackageResul
 	const composition = await readcomposition(cwd);
 	if (!TemplateEnviroment.typeproject) {
 		TemplateEnviroment.typeproject = (await openValidateQuestion('templateking', 'input', 'provide category of template', new CompositionProcessor(composition).checktemplatekind)).templateking
-
 	}
 
 	const files = await gatherFileToCompress(composition, options);
@@ -277,7 +277,7 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 			return Promise.all([totemplateXML(template), toContentTypes(files)]).then(result => {
 				return [
 					{ path: 'template.xml', contents: Buffer.from(result[0], 'utf8') },
-					{ path: 'template/template.json',contents:readFileSync(path.join(LocalPaths.CWD, 'template.json'))},
+					{ path: 'template.json',contents:readFileSync(path.join(LocalPaths.CWD, 'template.json'))},
 					{ path: 'FIle_Types.xml', contents: Buffer.from(result[1], 'utf8') },
 					...files,
 				];
@@ -286,6 +286,11 @@ export function processFiles(processors: IProcessor[], files: IFile[]): Promise<
 	});
 }
 
+export function processBasedOnExtension(){
+
+
+
+}
 export function totemplateXML(template: any): Promise<string> {
 	const TemplateXmlPath = path.join(__dirname,'../../../../../resources/templatete.composition');
 	return readFile(TemplateXmlPath, 'utf8')
@@ -314,4 +319,3 @@ export function toContentTypes(files: IFile[]): Promise<string> {
 		.then(contentTypesTemplateStr => _.template(contentTypesTemplateStr))
 		.then(contentTypesTemplate => contentTypesTemplate({ contentTypes }));
 }
-

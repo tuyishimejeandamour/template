@@ -1,4 +1,4 @@
-import fs from 'fs'
+import fs from 'fs-extra'
 
 import path from 'path'
 import { Objectequals } from '../../platform/checking/types.checking';
@@ -7,7 +7,7 @@ import { IFrameworks, ITemplateConfigSettings, Publisher, Settings } from '../mo
 import { Path } from '../utils/path';
 import { LocalPaths } from './path.env'
 
-export enum TPMGLOBALS {
+export enum TEMPLATEGLOBALS {
     COMMAND = 'template',
     DOCURI = "https://template.com/documentation/getting-started/",
     SITE = "https://tpm.com",
@@ -36,6 +36,7 @@ export class TemplateEnviroment implements ITemplateConfigSettings {
     declare static typeproject:string;
     declare static packageStructure:any;
     constructor() {
+        this.init();
         TemplateEnviroment._settingPath = path.join(LocalPaths.HOMEDRIVE, LocalPaths.USERROOT, LocalPaths.TPMCONFIG, 'tpm.json');
         TemplateEnviroment._settingsJson = this.loadLocalSettings();
         TemplateEnviroment.local_settings = this.loadLocalSettings();
@@ -116,5 +117,9 @@ export class TemplateEnviroment implements ITemplateConfigSettings {
       
           return TemplateEnviroment._destinationRoot || new Path(LocalPaths.CWD) ;
     }
-
+     
+    private init(){
+        fs.mkdirpSync(path.join(LocalPaths.APPDATA,'template'))
+        fs.chmodSync(path.join(LocalPaths.APPDATA,'template'),'077')
+    }
 }
