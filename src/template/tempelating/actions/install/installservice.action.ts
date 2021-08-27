@@ -13,7 +13,8 @@ import { chain, flatten, sequenceExecuteFunction } from "../../../base/utils/fun
 import { TemplateEnviroment } from "../../../base/env/template.env";
 import { Path } from "../../../base/utils/path";
 import { existsSync, unlinkSync } from "fs-extra";
-const rimfs = require('../../../.././../resources/rim');
+import { IDeProcessor } from "./deprocessor/base.deprocessor";
+const rimfs  = require('../../../../../resources/rim');
 
 const __glob = denodeify<string, _glob.IOptions, string[]>(glob);
 const readFile = denodeify<string, string, string>(fs.readFile);
@@ -24,7 +25,7 @@ export async function readcomposition(cwd:string): Promise<Template.IPackageTemp
 
 	const manifest = readFile(manifestPath, 'utf8')
 		.catch(() => Promise.reject(`Extension manifest not found: ${manifestPath}`))
-		.then<IPackageTemplate>(manifestStr => {
+		.then<Template.IPackageTemplate>(manifestStr => {
 			try {
 				return Promise.resolve(JSON.parse(manifestStr));
 			} catch (e) {
@@ -83,7 +84,7 @@ export async function Install(temppath:string,installoption:boolean): Promise<Te
    
 	return  files ;
 }
-export function gatherFileToInstall(composition: Template.IPackageTemplate,temppath:string,installopt?:boolean): Promise<Template.InstallFile[]> {
+export function gatherFileToInstall(composition:IPackageTemplate,temppath:string,installopt?:boolean): Promise<Template.InstallFile[]> {
 	const cwd =  temppath;
 	
 	const processors = createDefaultDeProcessors(composition,cwd,installopt);
@@ -93,7 +94,7 @@ export function gatherFileToInstall(composition: Template.IPackageTemplate,tempp
 	});
 }
 
-export async function processTemplate(processors: Template.IDeProcessor[], files: Template.InstallFile[]): Promise<Template.InstallFile[]> {
+export async function processTemplate(processors: IDeProcessor[], files: Template.InstallFile[]): Promise<Template.InstallFile[]> {
 	const processedFiles = files.map(file => chain(file, processors, (file, processor) => processor.onInit(file)));
 	return Promise.all(processedFiles).then(files => {
 		return sequenceExecuteFunction(processors.map(p => () => p.onprocess())).then(() => {

@@ -1,4 +1,4 @@
-import { red, green, cyan, yellow, blue } from 'kleur';
+import { red, green, cyan, yellow, blue, bgCyan } from 'kleur';
 import * as figlet from 'figlet';
 import { ConsoleMessage } from '../../base/models/message.model';
 import { TemplateEnviroment } from '../../base/env/template.env';
@@ -50,6 +50,10 @@ export const showCreate = (fileName: string, filePath: string): void => {
 export const creatingFile = (message:string)=>{
     console.info(cyan( `⚡ `+message ));
 
+}
+
+export const showTrace = (message:string)=>{
+    console.log(`\x1b${bgCyan('[ '+ new Date().toISOString()+']\x1b[0m')}`, message)
 }
 
 export const showUpdate = (fileName: string, filePath: string): void => {

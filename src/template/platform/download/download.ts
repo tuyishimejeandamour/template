@@ -1,6 +1,7 @@
 import path from "path";
 
 import { LocalPaths } from "../../base/env/path.env";
+import { generateid } from "../../base/utils/id.util";
 import { Path } from "../../base/utils/path";
 import { FileTemplateGenerator } from "../files/generate.platform";
 
@@ -27,7 +28,7 @@ export interface IDownloadOption{
 }
 export interface IDownload {
 
-	download(pack:string,type:EDownload): Promise<void>;
+	download(pack:string,type:EDownload,location?:string): Promise<void>;
 
 }
 
@@ -38,10 +39,11 @@ export class Download implements IDownload {
    private option:IDownloadOption
 	) { }
 
-	async download(resource:string,type:EDownload): Promise<void> {
+	async download(resource:string,type:EDownload,location?:string): Promise<void> {
     
 		if (type === EDownload.EXTENISON) {
-			await this.downloadExtension(resource);
+			const {res}= await this.downloadExtension(resource);
+			await this.fileService.write(new Path(location as string), res.stream);
 			return;
 		}
 		const {context,tempname} = await this.downloadTemplate(resource);
@@ -53,8 +55,8 @@ export class Download implements IDownload {
 		}
 	}
 
-  async  downloadExtension(name:string) {
-    
+  async  downloadExtension(name:string):Promise<{res:IRequest}> {
+    return Object.create(null)
   }
 
   async downloadTemplate(templateName:string):Promise<{context:IRequest,tempname:string}>{

@@ -191,3 +191,11 @@ export function Objectequals(one: any, other: any): boolean {
 	}
 	return true;
 }
+
+export function assertIsDefined<T>(arg: T | null | undefined): T {
+	if (isUndefinedOrNull(arg)) {
+		throw new Error('Assertion Failed: argument is undefined or null');
+	}
+
+	return arg;
+}

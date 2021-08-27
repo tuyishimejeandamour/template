@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import denodeify from 'denodeify';
 import { LocalPaths } from '../../base/env/path.env';
-import { IStore } from './store';
+import { IStore } from './storage';
 import { Publisher } from '../../base/models/store.model';
 import { readcomposition } from '../../tempelating/actions/package/packageService.action';
 import * as _read from 'read';

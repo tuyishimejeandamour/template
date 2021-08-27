@@ -1,4 +1,4 @@
-import { PulginType } from "../../tempelating/pluginManagement/plugin";
+import { PluginType } from "../../tempelating/pluginManagement/plugin";
 
 export interface TemplateUser {
 	name: string;
@@ -17,7 +17,7 @@ export interface IPackageTemplate {
 	// template
 	publisher: string;
 	templateKind:  TemplateKind;
-	extensionKind: PulginType;
+	extensionKind: PluginType;
 
 	// optional (npm)
 	author?: string | TemplateUser;

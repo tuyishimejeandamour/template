@@ -42,6 +42,7 @@ export interface IPackageTemplate {
 	// template
 	publisher: string;
 	templateKind:  TemplateKind;
+	templateEngine:string;
 
 	// optional (npm)
 	author?: string | TemplateUser;

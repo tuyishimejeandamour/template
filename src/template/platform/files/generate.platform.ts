@@ -23,7 +23,7 @@ export class FileTemplateGenerator implements IFileTemplateGenerator {
         this._copySingle(to,from)
         
     };
-    copy(from: Path, to: Path, opt: any) {
+    copy(from: Path, to: Path, opt: any={}) {
         if (statSync(from.path).isDirectory()) {
             readdirSync(from.path).map(name=>{
                 this.copy(new Path(path.join(from.path,name)),to,opt)

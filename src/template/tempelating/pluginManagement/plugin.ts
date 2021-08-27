@@ -1,45 +1,55 @@
 import { IPackageTemplate } from "template";
 import { Path } from "../../base/utils/path";
+import { PluginService } from "./pluginservice";
 
-export enum PulginType{
+export enum PluginType{
   PACKAGE,
   INSTALL
 }
-
-export interface IPlugin {
-	readonly type: PulginType;
-	readonly isBuiltin: boolean;
-	readonly identifier: string;
+export interface Id{
+	id:string
+}
+export interface IPluginContent {
+	readonly type: PluginType;
+	readonly identifier: Id;
 	readonly manifest: IPackageTemplate;
 	readonly location: Path;
 }
-// export interface IPulginComposition {
-// 	readonly name: string;
-// 	readonly displayName?: string;
-// 	readonly publisher: string;
-// 	readonly version: string;
-// 	readonly engines: { readonly vscode: string };
-// 	readonly description?: string;
-// 	readonly main?: string;
-// 	readonly browser?: string;
-// 	readonly icon?: string;
-// 	readonly categories?: string[];
-// 	readonly keywords?: string[];
-// 	readonly activationEvents?: string[];
-// 	readonly extensionDependencies?: string[];
-// 	readonly extensionPack?: string[];
-// 	readonly extensionKind?: ExtensionKind | ExtensionKind[];
-// 	readonly contributes?: IExtensionContributions;
-// 	readonly repository?: { url: string; };
-// 	readonly bugs?: { url: string; };
-// 	readonly enableProposedApi?: boolean;
-// 	readonly api?: string;
-// 	readonly scripts?: { [key: string]: string; };
-// }
+
+export interface IPlugin{
+	id: string;
+	version: string;
+}
 
 export interface IPluginScanner{
-    scanPulgins:(type: PulginType | null)=> Promise<IPlugin[]>;
-    removeUninstalledPulgin:(extension: IPlugin)=> Promise<void>;
-    removePulgin:(extension: IPlugin, type: PulginType)=> Promise<void> 
+    scanPulgins:(type?: PluginType)=> Promise<IPluginContent[]>;
+    removeUninstalledPulgin:(extension: IPluginContent)=> Promise<void>;
+    removePulgin:(extension: IPluginContent, type: PluginType)=> Promise<void>;
 
+}
+
+export interface IPluginService{
+	getComposition(template: Path): Promise<IPackageTemplate>;
+	install(template: Path): Promise<IPluginContent>;
+	uninstall(extension: IPluginContent): Promise<void>;
+	getInstalled(type?: PluginType): Promise<IPluginContent[]>;
+}
+
+export class Plugin implements IPlugin {
+	readonly id: string;
+
+	constructor(
+		identifier: {id:string},
+		readonly version: string
+	) {
+		this.id = identifier.id;
+	}
+
+	key(): string {
+		return `${this.id}-${this.version}`;
+	}
+
+	equals(o: Plugin): boolean {
+		return PluginService.areSame(this, o) && this.version === o.version;
+	}
 }
