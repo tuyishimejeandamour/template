@@ -5,8 +5,7 @@ import { TEMPLATE } from './template';
 import { TemplateEnviroment } from './template/base/env/template.env';
 import { loginPublisher } from './template/platform/store/publisherstoreService';
 import { install } from './template/tempelating/actions/install/install.action';
-
-import { packTemplate, toBePublished } from './template/tempelating/actions/package/package.action';
+import { installPlugin, packTemplate, toBePublished } from './template/tempelating/templateCli';
 const pkg = require('../package.json')
 
 export function index() {
@@ -58,6 +57,12 @@ export function index() {
     .description('install package')
     .option('--s, --skip', 'skip installation of dependencies and devdependencies')
     .action((templatePackage, { skip }) => TEMPLATE(install(templatePackage, skip)))
+  program
+    .command('plugin <plugin>')
+    .description('install plugin for better ignoring un import files')
+    .option('-g, --global', 'install for global use')
+    .option('-s, --save', 'install for this project only')
+    .action((templatePackage,global) => TEMPLATE(installPlugin(templatePackage,global)))
   // program
   // 	.command('logout <publisher>')
   // 	.description('Remove a publisher from the known publishers list')
@@ -82,6 +87,7 @@ export function index() {
 process.on('beforeExit', () => {
   console.log('⭐ ' + "thank you for using template");
 })
+
 index();
 
 

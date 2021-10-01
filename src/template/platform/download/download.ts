@@ -36,7 +36,7 @@ export class Download implements IDownload {
 
 	constructor(
 	 private fileService:FileTemplateGenerator,
-   private option:IDownloadOption
+     private option:IDownloadOption
 	) { }
 
 	async download(resource:string,type:EDownload,location?:string): Promise<void> {

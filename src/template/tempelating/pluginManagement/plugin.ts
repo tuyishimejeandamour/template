@@ -35,6 +35,10 @@ export interface IPluginService{
 	getInstalled(type?: PluginType): Promise<IPluginContent[]>;
 }
 
+export interface IPluginInstallOption{
+	global:boolean,
+	save:boolean
+}
 export class Plugin implements IPlugin {
 	readonly id: string;
 
