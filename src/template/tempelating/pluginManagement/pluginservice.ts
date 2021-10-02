@@ -104,12 +104,12 @@ export class PluginService implements IPluginService {
 	}
 
 	private _getCompositon(fspath: string) {
-		return buffer(fspath, 'extension/package.json')
+		return buffer(fspath, 'plugin/template.json')
 			.then(buffer => {
 				try {
 					return JSON.parse(buffer.toString('utf8'));
 				} catch (err) {
-					throw new Error("package.json is not a JSON file.");
+					throw new Error("template.json is not a JSON file.");
 				}
 			});
 
