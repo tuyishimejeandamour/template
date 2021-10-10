@@ -23,7 +23,6 @@ export interface IPlugin{
 
 export interface IPluginScanner{
     scanPulgins:(type?: PluginType)=> Promise<IPluginContent[]>;
-    removeUninstalledPulgin:(extension: IPluginContent)=> Promise<void>;
     removePulgin:(extension: IPluginContent, type: PluginType)=> Promise<void>;
 
 }
@@ -37,7 +36,8 @@ export interface IPluginService{
 
 export interface IPluginInstallOption{
 	global:boolean,
-	save:boolean
+	save:boolean,
+	list:boolean
 }
 export class Plugin implements IPlugin {
 	readonly id: string;

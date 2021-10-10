@@ -69,10 +69,5 @@ export class Download implements IDownload {
 
 
 export const downloadPackage = (pack:string):Promise<any>=>{
-
-  // const stream = fs.readFileSync(path.join(__dirname,'../../../../test/stunicons-0.0.1.template'))
-  // fs.writeFileSync(path.join(LocalPaths.APPDATA,'template','stunicons-0.0.1.template'),stream)
-
-  //fs.copyFileSync(path.join(__dirname,'../../../../test/stunicons-0.0.1.template'),path.join(LocalPaths.APPDATA,'template'))
   return  Promise.resolve(path.join(LocalPaths.APPDATA,'template','stunicons-0.0.1','template'));
 }

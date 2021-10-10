@@ -13,7 +13,6 @@ export function index() {
   new TemplateEnviroment();
 
   program.version(pkg.version).usage('<command> [options]');
-
   program
     .command('ls')
     .description('Lists all the files that will be published')
@@ -58,11 +57,13 @@ export function index() {
     .option('--s, --skip', 'skip installation of dependencies and devdependencies')
     .action((templatePackage, { skip }) => TEMPLATE(install(templatePackage, skip)))
   program
-    .command('plugin <plugin>')
+    .command('plugin [plugin]')
     .description('install plugin for better ignoring un import files')
     .option('-g, --global', 'install for global use')
     .option('-s, --save', 'install for this project only')
-    .action((templatePackage,global) => TEMPLATE(installPlugin(templatePackage,global)))
+    .option('-l, --list', 'list the installed plugin')
+    .action((templatePackage, global) => TEMPLATE(installPlugin(templatePackage, global)))
+
   // program
   // 	.command('logout <publisher>')
   // 	.description('Remove a publisher from the known publishers list')

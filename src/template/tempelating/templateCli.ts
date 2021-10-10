@@ -5,14 +5,19 @@ import { showSuccess } from "../platform/log/logger.platform";
 import { getTemplateFiles, pack, readcomposition } from "./actions/package/packageService.action";
 import { IPackageOptions } from "./actions/package/processor/base.processor";
 import { IPluginInstallOption } from "./pluginManagement/plugin";
+import { PluginScanner } from "./pluginManagement/pluginScanner";
 
 const stat = denodeify(fs.stat);
 
-export function installPlugin(templatePlugin:string, option:IPluginInstallOption):Promise<any> {
-
+export async function installPlugin(templatePlugin:string, option:IPluginInstallOption):Promise<any> {
+   const pluginservice = new PluginScanner();
     console.log(templatePlugin)
     console.log(option.global)
     console.log(option.save)
+    console.log(option.list)
+    if (option.list) {
+        console.log(await(pluginservice.scanPulgins()))
+    }
 
 return Promise.resolve()
     

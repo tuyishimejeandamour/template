@@ -1,5 +1,5 @@
-import { readdirSync, statSync } from "node:fs";
-import path from "node:path";
+import { readdirSync, statSync } from "fs-extra";
+import path from "path";
 import { PLUGINLOCATION } from "../../base/env/extension.env";
 import { ConsoleError } from "../../base/utils/consoleerror";
 import { flatten } from "../../base/utils/function.utils";
@@ -54,10 +54,6 @@ export class PluginScanner implements IPluginScanner {
 		}
 		return null;
 	}
-    removeUninstalledPulgin(extension: IPluginContent) :Promise<void>{
-        throw new Error("");
-
-    }
     async removePulgin(extension: IPluginContent, type: PluginType): Promise<void>{
         showTrace(`Deleting ${type} extension from disk, ${extension.identifier.id},${extension.location.path}`);
 		await rimfs(extension.location.path);
